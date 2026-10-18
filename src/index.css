@@ -1,0 +1,1205 @@
+/* ==========================================================================
+   RETRO LOVE DIARY & DIGITAL ARCHIVE - MASTER DESIGN SYSTEM
+   Viraksak Koy + Chanreaksa Sok (V + C)
+   ========================================================================== */
+
+:root {
+  /* Sophisticated Retro Palette */
+  --retro-cream: #F7F3E9;
+  --retro-cream-dark: #EFE8D8;
+  --retro-offwhite: #FAF8F5;
+  --retro-charcoal: #1C1B1A;
+  --retro-charcoal-light: #2A2826;
+  --retro-burgundy: #682A36;
+  --retro-burgundy-light: #842C3E;
+  --retro-brown: #5C4A3E;
+  --retro-brown-light: #7A6353;
+  --retro-faded-red: #C25345;
+  --retro-beige: #DDD2C1;
+  --retro-olive: #6E7259;
+  --retro-olive-dark: #50543D;
+  --retro-champagne: #E5C388;
+  --retro-champagne-light: #F4E2BD;
+  --retro-border: #C8BDAC;
+  --retro-border-dark: #3E3B37;
+  --retro-paper-shadow: rgba(28, 27, 26, 0.16);
+
+  /* Typography */
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-handwritten: 'Caveat', 'Reenie Beanie', cursive;
+  --font-pixel: 'VT323', 'Space Mono', monospace;
+  --font-mono: 'Space Mono', Courier, monospace;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Elevation */
+  --shadow-polaroid: 0 16px 36px -8px rgba(28, 27, 26, 0.28), 0 4px 12px rgba(28, 27, 26, 0.12);
+  --shadow-window: 0 20px 48px rgba(15, 14, 13, 0.35), 0 4px 10px rgba(0, 0, 0, 0.15);
+  --shadow-hud: 0 8px 32px rgba(0, 0, 0, 0.45);
+}
+
+/* Reset & Global */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  background-color: var(--retro-cream);
+  color: var(--retro-charcoal);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Retro OS Cursor */
+body {
+  cursor: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 2V19L7.5 14.5L11.5 22L14 20.5L10 13.5H16L3 2Z' fill='%231C1B1A' stroke='%23FAF8F5' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E"), auto;
+}
+
+a, button, [role="button"], .interactive, input, select, textarea {
+  cursor: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 2V11M7 11V18C7 20 8.5 21 10.5 21C12.5 21 13.5 19.5 13.5 18V13.5M7 11H5C3.5 11 2 12.5 2 14.5C2 17 4.5 19.5 7 21M13.5 13.5V9C13.5 7.5 15 7.5 15 9V14M15 14V10.5C15 9 16.5 9 16.5 10.5V14M16.5 14V12C16.5 10.5 18 10.5 18 12V16.5C18 19 16 21 13.5 21' stroke='%23FAF8F5' stroke-width='2'/%3E%3Cpath d='M7 2V11M7 11V18C7 20 8.5 21 10.5 21C12.5 21 13.5 19.5 13.5 18V13.5M7 11H5C3.5 11 2 12.5 2 14.5C2 17 4.5 19.5 7 21M13.5 13.5V9C13.5 7.5 15 7.5 15 9V14M15 14V10.5C15 9 16.5 9 16.5 10.5V14M16.5 14V12C16.5 10.5 18 10.5 18 12V16.5C18 19 16 21 13.5 21' stroke='%231C1B1A' stroke-width='1'/%3E%3C/svg%3E"), pointer !important;
+}
+
+/* Subtle Film Grain Texture Overlay */
+.film-grain-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 998;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* ==========================================================================
+   CRT MODE SYSTEM
+   ========================================================================== */
+.crt-mode {
+  position: relative;
+  overflow-x: hidden;
+}
+
+.crt-mode::before {
+  content: " ";
+  display: block;
+  position: fixed;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.18) 50%);
+  background-size: 100% 3px;
+  z-index: 999;
+  pointer-events: none;
+  opacity: 0.55;
+  animation: crtScanlineFlicker 0.12s infinite alternate;
+}
+
+.crt-mode::after {
+  content: " ";
+  display: block;
+  position: fixed;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: radial-gradient(circle at center, transparent 65%, rgba(10, 8, 8, 0.4) 100%);
+  z-index: 1000;
+  pointer-events: none;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.45);
+}
+
+@keyframes crtScanlineFlicker {
+  0% { opacity: 0.48; }
+  100% { opacity: 0.58; }
+}
+
+/* ==========================================================================
+   RETRO TOP NAVIGATION BAR
+   ========================================================================== */
+.retro-nav-container {
+  position: fixed;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: 1140px;
+  z-index: 900;
+  transition: all 0.3s ease;
+}
+
+.retro-nav-frame {
+  background: rgba(247, 243, 233, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid var(--retro-charcoal);
+  box-shadow: 3px 3px 0px var(--retro-charcoal), 0 8px 24px rgba(0,0,0,0.06);
+  padding: 8px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 4px;
+}
+
+.nav-top-row {
+  display: contents;
+}
+
+.nav-brand-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  user-select: none;
+}
+
+.nav-badge-monogram {
+  font-family: var(--font-pixel);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  background: var(--retro-charcoal);
+  color: var(--retro-champagne);
+  padding: 2px 10px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.nav-badge-monogram:hover {
+  transform: scale(1.04);
+  background: var(--retro-burgundy);
+}
+
+.nav-title-sub {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--retro-brown);
+  text-transform: uppercase;
+}
+
+.nav-year-rec {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-pixel);
+  font-size: 1.05rem;
+  letter-spacing: 1px;
+  color: var(--retro-charcoal);
+}
+
+.rec-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background-color: var(--retro-faded-red);
+  box-shadow: 0 0 8px rgba(194, 83, 69, 0.8);
+  animation: recBlink 1.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes recBlink {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.2; transform: scale(0.85); }
+}
+
+.nav-links-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-link-btn {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--retro-charcoal);
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 6px 12px;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+}
+
+.nav-link-btn:hover {
+  background: var(--retro-beige);
+  border-color: var(--retro-border);
+}
+
+.nav-link-btn.active {
+  background: var(--retro-charcoal);
+  color: var(--retro-cream);
+  border-color: var(--retro-charcoal);
+  box-shadow: 1.5px 1.5px 0px var(--retro-burgundy);
+}
+
+.nav-control-toggles {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-icon-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--retro-cream-dark);
+  border: 1.5px solid var(--retro-charcoal);
+  border-radius: 3px;
+  color: var(--retro-charcoal);
+  font-family: var(--font-pixel);
+  font-size: 0.9rem;
+  font-weight: 700;
+  transition: all 0.15s ease;
+}
+
+.nav-icon-toggle:hover {
+  background: var(--retro-champagne);
+  transform: translate(-1px, -1px);
+  box-shadow: 2px 2px 0px var(--retro-charcoal);
+}
+
+.nav-icon-toggle:active {
+  transform: translate(1px, 1px);
+  box-shadow: 0px 0px 0px var(--retro-charcoal);
+}
+
+.nav-icon-toggle.active-indicator {
+  background: var(--retro-burgundy);
+  color: var(--retro-champagne);
+}
+
+/* ==========================================================================
+   CAMERA VIEWFINDER HUD OVERLAY
+   ========================================================================== */
+.camera-hud-frame {
+  position: fixed;
+  inset: 12px;
+  pointer-events: none;
+  z-index: 850;
+  border: 1px solid rgba(28, 27, 26, 0.22);
+  border-radius: 6px;
+}
+
+.hud-corner {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-color: rgba(28, 27, 26, 0.45);
+}
+
+.hud-corner-tl { top: 0; left: 0; border-top: 2px solid; border-left: 2px solid; }
+.hud-corner-tr { top: 0; right: 0; border-top: 2px solid; border-right: 2px solid; }
+.hud-corner-bl { bottom: 0; left: 0; border-bottom: 2px solid; border-left: 2px solid; }
+.hud-corner-br { bottom: 0; right: 0; border-bottom: 2px solid; border-right: 2px solid; }
+
+.hud-crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 48px;
+  height: 48px;
+  opacity: 0.28;
+}
+
+.hud-crosshair::before,
+.hud-crosshair::after {
+  content: '';
+  position: absolute;
+  background: var(--retro-charcoal);
+}
+
+.hud-crosshair::before {
+  top: 50%; left: 0; right: 0; height: 1px;
+}
+.hud-crosshair::after {
+  left: 50%; top: 0; bottom: 0; width: 1px;
+}
+
+.hud-bottom-bar {
+  position: absolute;
+  bottom: 12px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-pixel);
+  font-size: 1.15rem;
+  letter-spacing: 1px;
+  color: var(--retro-charcoal);
+  opacity: 0.75;
+}
+
+/* ==========================================================================
+   REALISTIC POLAROID CARDS & PHOTO ALBUM
+   ========================================================================== */
+.polaroid-card {
+  position: relative;
+  background: var(--retro-offwhite);
+  padding: 14px 14px 22px 14px;
+  border-radius: 2px;
+  border: 1px solid var(--retro-border);
+  box-shadow: var(--shadow-polaroid);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+  user-select: none;
+}
+
+.polaroid-card:hover {
+  transform: translateY(-8px) rotate(0deg) scale(1.02) !important;
+  box-shadow: 0 24px 44px -8px rgba(28, 27, 26, 0.35), 0 6px 16px rgba(28, 27, 26, 0.18);
+  z-index: 20;
+}
+
+.polaroid-photo-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: #151413;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.polaroid-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: sepia(0.12) contrast(1.04) brightness(0.98);
+  transition: transform 0.6s ease;
+}
+
+.polaroid-card:hover .polaroid-img {
+  transform: scale(1.05);
+}
+
+/* Authentic Washi Tape Accent */
+.washi-tape {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+  width: 86px;
+  height: 24px;
+  background: rgba(239, 232, 216, 0.85);
+  backdrop-filter: blur(2px);
+  border: 1px dashed rgba(194, 83, 69, 0.35);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+  z-index: 5;
+}
+
+.polaroid-handwriting {
+  font-family: var(--font-handwritten);
+  font-size: 1.55rem;
+  line-height: 1.25;
+  color: var(--retro-burgundy);
+  margin-top: 14px;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+.polaroid-metadata {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-family: var(--font-pixel);
+  font-size: 0.95rem;
+  color: var(--retro-brown);
+  opacity: 0.85;
+}
+
+/* ==========================================================================
+   RETRO OS DESKTOP SYSTEM ("V+C OS")
+   ========================================================================== */
+.retro-desktop-view {
+  min-height: 100vh;
+  padding: 90px 24px 100px 24px;
+  position: relative;
+}
+
+.desktop-icons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 24px 16px;
+  max-width: 220px;
+}
+
+.desktop-icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 6px;
+  border-radius: 4px;
+  text-align: center;
+  transition: background 0.15s ease;
+  user-select: none;
+}
+
+.desktop-icon-item:hover {
+  background: rgba(221, 210, 193, 0.5);
+}
+
+.desktop-icon-item:active {
+  background: rgba(104, 42, 54, 0.2);
+}
+
+.desktop-icon-symbol {
+  font-size: 2.2rem;
+  filter: drop-shadow(1px 2px 3px rgba(0,0,0,0.15));
+}
+
+.desktop-icon-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--retro-charcoal);
+  text-shadow: 0 1px 1px rgba(255,255,255,0.8);
+  line-height: 1.2;
+}
+
+/* Classic OS Window Frame */
+.os-window {
+  background: var(--retro-offwhite);
+  border: 2px solid var(--retro-charcoal);
+  border-radius: 4px;
+  box-shadow: var(--shadow-window);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.os-window-titlebar {
+  background: linear-gradient(90deg, var(--retro-burgundy) 0%, #4D1C26 100%);
+  color: var(--retro-champagne);
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  user-select: none;
+}
+
+.os-window-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.os-control-btn {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--retro-cream);
+  border: 1px solid var(--retro-charcoal);
+  font-family: var(--font-pixel);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--retro-charcoal);
+  line-height: 1;
+  transition: all 0.1s ease;
+}
+
+.os-control-btn:hover {
+  background: var(--retro-faded-red);
+  color: #fff;
+}
+
+.os-window-body {
+  padding: 16px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* ==========================================================================
+   CASSETTE / MP3 MUSIC PLAYER WIDGET
+   ========================================================================== */
+.cassette-player-widget {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 920;
+  width: 290px;
+  background: var(--retro-cream-dark);
+  border: 2px solid var(--retro-charcoal);
+  border-radius: 6px;
+  padding: 12px;
+  box-shadow: 4px 4px 0px var(--retro-charcoal), var(--shadow-hud);
+}
+
+.cassette-body-vintage {
+  background: #23211F;
+  border-radius: 4px;
+  padding: 10px;
+  position: relative;
+  color: var(--retro-champagne);
+}
+
+.cassette-label-tape {
+  background: var(--retro-cream);
+  color: var(--retro-charcoal);
+  border-radius: 2px;
+  padding: 4px 8px;
+  font-family: var(--font-pixel);
+  font-size: 0.95rem;
+  text-align: center;
+  margin-bottom: 8px;
+  border: 1px solid var(--retro-border);
+}
+
+.cassette-spools-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  padding: 8px 0;
+  background: #171615;
+  border-radius: 3px;
+  border: 1px inset #000;
+}
+
+.spool-wheel {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 3px dashed var(--retro-champagne);
+  background: #2D2A28;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spool-wheel.spinning {
+  animation: spinWheel 2.4s linear infinite;
+}
+
+@keyframes spinWheel {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spool-center {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--retro-charcoal);
+  border: 2px solid var(--retro-champagne);
+}
+
+.cassette-digital-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-family: var(--font-pixel);
+  font-size: 1.15rem;
+  color: #79D48C;
+  background: #101511;
+  padding: 4px 8px;
+  border-radius: 2px;
+  border: 1px solid #1E3323;
+}
+
+.cassette-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  gap: 6px;
+}
+
+.tape-btn {
+  flex: 1;
+  padding: 6px 4px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  background: var(--retro-cream);
+  color: var(--retro-charcoal);
+  border: 1.5px solid var(--retro-charcoal);
+  border-radius: 2px;
+  transition: all 0.1s ease;
+}
+
+.tape-btn:hover {
+  background: var(--retro-champagne);
+  transform: translateY(-1px);
+}
+
+.tape-btn:active {
+  transform: translateY(1px);
+  background: var(--retro-beige);
+}
+
+.tape-volume-slider {
+  width: 100%;
+  accent-color: var(--retro-burgundy);
+  height: 4px;
+  margin-top: 8px;
+}
+
+/* ==========================================================================
+   CAMERA SHUTTER BLADE TRANSITION
+   ========================================================================== */
+.camera-shutter-container {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.shutter-blade {
+  flex: 1;
+  background: #0D0C0B;
+  transition: transform 0.28s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.shutter-blade-top {
+  transform: translateY(-100%);
+}
+
+.shutter-blade-bottom {
+  transform: translateY(100%);
+}
+
+.shutter-active .shutter-blade-top {
+  transform: translateY(0%);
+}
+
+.shutter-active .shutter-blade-bottom {
+  transform: translateY(0%);
+}
+
+/* ==========================================================================
+   ADVANCED RESPONSIVE SYSTEM (MOBILE, TABLET, DESKTOP)
+   ========================================================================== */
+
+/* Tablets & Small Laptops (max-width: 1024px) */
+@media (max-width: 1024px) {
+  .retro-nav-container {
+    width: calc(100% - 24px);
+    top: 10px;
+  }
+  .desktop-icons-grid {
+    max-width: 100%;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 16px;
+  }
+}
+
+/* Mobile Devices (max-width: 768px) */
+@media (max-width: 768px) {
+  /* Navigation Bar: Compact 2-row layout */
+  .retro-nav-container {
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    transform: none;
+    width: calc(100% - 16px);
+  }
+
+  .retro-nav-frame {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 8px 10px;
+  }
+
+  .nav-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .nav-links-row {
+    display: flex;
+    justify-content: flex-start;
+    gap: 4px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    padding: 4px 0 2px 0;
+    border-top: 1px dashed var(--retro-border);
+  }
+
+  .nav-links-row::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+
+  .nav-link-btn {
+    padding: 5px 10px;
+    font-size: 0.68rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* Viewfinder HUD: avoid colliding with mobile nav */
+  .camera-hud-frame {
+    inset: 6px;
+  }
+
+  .hud-corner {
+    width: 14px;
+    height: 14px;
+  }
+
+  .hud-top-osd {
+    top: 110px !important;
+    font-size: 0.95rem !important;
+  }
+
+  .hud-bottom-bar {
+    font-size: 0.82rem !important;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
+    bottom: 8px;
+    left: 10px;
+    right: 10px;
+  }
+
+  /* Cassette Player Widget on Mobile */
+  .cassette-player-widget {
+    bottom: 12px;
+    left: 10px;
+    right: 10px;
+    width: calc(100% - 20px) !important;
+    max-width: 360px;
+    margin: 0 auto;
+  }
+
+  /* Modals: Mobile Fullscreen / Fluid Bottom Sheet */
+  .os-window {
+    max-height: 94vh !important;
+    margin: 0 !important;
+  }
+
+  .os-window-body {
+    padding: 14px !important;
+  }
+
+  /* Polaroid Cards on Mobile */
+  .polaroid-card {
+    padding: 10px 10px 18px 10px;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  .polaroid-handwriting {
+    font-size: 1.35rem;
+  }
+
+  /* Headings & Texts on Mobile */
+  h1 {
+    font-size: clamp(1.85rem, 8vw, 3rem) !important;
+    letter-spacing: -0.5px !important;
+  }
+
+  h2 {
+    font-size: clamp(1.6rem, 6vw, 2.2rem) !important;
+  }
+
+  p {
+    font-size: 0.92rem !important;
+  }
+
+  /* Touch buttons minimum touch target */
+  button, .tape-btn, .nav-icon-toggle, .os-control-btn {
+    min-height: 36px;
+  }
+}
+
+/* Extra Small Phones (max-width: 420px) */
+@media (max-width: 420px) {
+  .nav-badge-monogram {
+    font-size: 1.1rem;
+    padding: 2px 6px;
+  }
+
+  .nav-title-sub {
+    display: none; /* Hide subtitle on tiny screens to save space */
+  }
+
+  .cassette-spools-row {
+    gap: 18px;
+  }
+
+  .spool-wheel {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* ==================================================
+   FLOATING STORY PHOTOS ANIMATIONS
+   ================================================== */
+@keyframes floatStory1 {
+  0%, 100% {
+    transform: translateY(0px) rotate(-2.5deg);
+    box-shadow: 0 12px 30px rgba(28, 27, 26, 0.16);
+  }
+  50% {
+    transform: translateY(-22px) rotate(0.8deg);
+    box-shadow: 0 28px 48px rgba(28, 27, 26, 0.28);
+  }
+}
+
+@keyframes floatStory2 {
+  0%, 100% {
+    transform: translateY(0px) rotate(3deg);
+    box-shadow: 0 14px 32px rgba(28, 27, 26, 0.16);
+  }
+  50% {
+    transform: translateY(-24px) rotate(-1.2deg);
+    box-shadow: 0 30px 50px rgba(28, 27, 26, 0.28);
+  }
+}
+
+@keyframes floatStory3 {
+  0%, 100% {
+    transform: translateY(0px) rotate(-1.5deg);
+    box-shadow: 0 10px 28px rgba(28, 27, 26, 0.16);
+  }
+  50% {
+    transform: translateY(-20px) rotate(2deg);
+    box-shadow: 0 26px 44px rgba(28, 27, 26, 0.28);
+  }
+}
+
+@keyframes floatStory4 {
+  0%, 100% {
+    transform: translateY(0px) rotate(2deg);
+    box-shadow: 0 12px 30px rgba(28, 27, 26, 0.16);
+  }
+  50% {
+    transform: translateY(-26px) rotate(-2.2deg);
+    box-shadow: 0 32px 52px rgba(28, 27, 26, 0.28);
+  }
+}
+
+.floating-story-card {
+  position: relative;
+  background: var(--retro-cream);
+  border: 1.5px solid var(--retro-charcoal);
+  border-radius: 4px;
+  padding: 12px 12px 18px 12px;
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.3s ease;
+  will-change: transform;
+}
+
+.floating-story-card:hover {
+  animation-play-state: paused !important;
+  transform: translateY(-10px) scale(1.03) !important;
+  box-shadow: 0 32px 60px rgba(128, 0, 32, 0.32) !important;
+  border-color: var(--retro-burgundy) !important;
+}
+
+.floating-story-card.float-1 {
+  animation: floatStory1 6.5s ease-in-out infinite;
+}
+
+.floating-story-card.float-2 {
+  animation: floatStory2 7.8s ease-in-out infinite;
+  animation-delay: -1.8s;
+}
+
+.floating-story-card.float-3 {
+  animation: floatStory3 6.2s ease-in-out infinite;
+  animation-delay: -3.2s;
+}
+
+.floating-story-card.float-4 {
+  animation: floatStory4 8.5s ease-in-out infinite;
+  animation-delay: -4.5s;
+}
+
+/* ==================================================
+   STICKERS OF US (IMAGE2.JPEG & IMAGE3.JPEG)
+   ================================================== */
+@keyframes stickerFloatLeft {
+  0%, 100% {
+    transform: translateY(0px) rotate(-4deg);
+    box-shadow: 0 10px 24px rgba(28, 27, 26, 0.22);
+  }
+  50% {
+    transform: translateY(-16px) rotate(-1deg);
+    box-shadow: 0 24px 38px rgba(128, 0, 32, 0.28);
+  }
+}
+
+@keyframes stickerFloatRight {
+  0%, 100% {
+    transform: translateY(0px) rotate(4.5deg);
+    box-shadow: 0 10px 24px rgba(28, 27, 26, 0.22);
+  }
+  50% {
+    transform: translateY(-18px) rotate(1.5deg);
+    box-shadow: 0 26px 42px rgba(128, 0, 32, 0.28);
+  }
+}
+
+.couple-sticker-container {
+  position: relative;
+  user-select: none;
+  z-index: 12;
+}
+
+.couple-sticker {
+  display: inline-block;
+  background: #FFFFFF;
+  padding: 10px 10px 14px 10px;
+  border-radius: 8px;
+  border: 4.5px solid #FFFFFF;
+  box-shadow: 0 16px 36px rgba(28, 27, 26, 0.26), 0 0 0 1.5px rgba(0, 0, 0, 0.1);
+  cursor: grab;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+  will-change: transform;
+}
+
+.couple-sticker:hover {
+  animation-play-state: paused !important;
+  transform: scale(1.08) rotate(0deg) !important;
+  box-shadow: 0 24px 50px rgba(128, 0, 32, 0.38), 0 0 0 2px var(--retro-burgundy) !important;
+  z-index: 30;
+}
+
+.couple-sticker.float-left {
+  animation: stickerFloatLeft 6s ease-in-out infinite;
+}
+
+.couple-sticker.float-right {
+  animation: stickerFloatRight 7.2s ease-in-out infinite;
+  animation-delay: -2s;
+}
+
+.couple-sticker-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 5px;
+  display: block;
+}
+
+.couple-sticker-tape {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-3deg);
+  width: 70px;
+  height: 22px;
+  background: rgba(229, 195, 136, 0.82);
+  border-left: 2px dashed rgba(61, 57, 53, 0.3);
+  border-right: 2px dashed rgba(61, 57, 53, 0.3);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.14);
+  z-index: 3;
+}
+
+.couple-sticker-badge {
+  font-family: var(--font-pixel);
+  font-size: 0.84rem;
+  color: var(--retro-burgundy);
+  text-align: center;
+  margin-top: 8px;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+/* ==================================================
+   CONNECTED SCROLL SECTIONS & RESPONSIVE LAYOUT
+   ================================================== */
+html {
+  scroll-behavior: smooth;
+}
+
+.connected-scroll-page {
+  position: relative;
+  z-index: 10;
+}
+
+.diary-section {
+  position: relative;
+  padding: 80px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Section divider with vintage film strip */
+.section-divider-film {
+  display: flex;
+  align-items: center;
+  justifyContent: center;
+  gap: 16px;
+  margin: 40px auto;
+  max-width: 600px;
+  opacity: 0.6;
+}
+
+.section-divider-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--retro-border-dark), transparent);
+}
+
+@keyframes bounceDown {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+/* Laptop layout specifics */
+@media (min-width: 1024px) {
+  .hero-stickers-wrapper {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .sticker-pos-left {
+    position: absolute;
+    top: 50%;
+    left: 5%;
+    transform: translateY(-50%);
+    width: 300px;
+    pointer-events: auto;
+  }
+
+  .sticker-pos-right {
+    position: absolute;
+    top: 50%;
+    right: 5%;
+    transform: translateY(-50%);
+    width: 310px;
+    pointer-events: auto;
+  }
+}
+
+/* Mobile & Tablet layout specifics */
+@media (max-width: 1023px) {
+  .hero-stickers-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 22px;
+    margin-top: 36px;
+    width: 100%;
+    pointer-events: auto;
+  }
+
+  .sticker-pos-left,
+  .sticker-pos-right {
+    position: relative;
+    width: 195px;
+    max-width: 47vw;
+  }
+}
+
+/* ==================================================
+   IMAGE CROPPER STYLES
+   ================================================== */
+.crop-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 27, 26, 0.88);
+  backdrop-filter: blur(8px);
+  z-index: 2500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+}
+
+.crop-modal-content {
+  background: var(--retro-cream);
+  border: 2px solid var(--retro-charcoal);
+  border-radius: 6px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+  width: 100%;
+  max-width: 520px;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.crop-canvas-area {
+  position: relative;
+  background: #11100F;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  touch-action: none;
+  user-select: none;
+}
+
+.crop-grid-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border: 2px solid rgba(229, 195, 136, 0.8);
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+}
+
+.crop-grid-overlay > div {
+  border: 1px dashed rgba(255, 255, 255, 0.25);
+}
+
+/* ==================================================
+   ADMIN EDITABLE TEXT STYLES (Clean & Unobtrusive)
+   ================================================== */
+.admin-editable-text {
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.admin-editable-text.is-logged-in {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-editable-text.is-logged-in:hover {
+  outline: 1.5px dashed var(--retro-burgundy);
+  background-color: rgba(229, 195, 136, 0.25);
+}
+
+.editable-image-container {
+  cursor: default;
+}
+
+.editable-image-container.is-admin {
+  cursor: pointer;
+}
+
+.editable-image-badge {
+  opacity: 0.9;
+  transition: all 0.2s ease;
+}
+
+.editable-image-container.is-admin:hover .editable-image-badge {
+  opacity: 1 !important;
+  transform: translateY(0) scale(1.05) !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6) !important;
+}
+
+.editable-image-container.is-admin:hover img {
+  filter: brightness(0.92);
+}
+
+
+
