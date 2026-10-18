@@ -6,7 +6,7 @@ import { saveMemoryToFirestore, deleteMemoryFromFirestore } from './firebase';
 
 const STORAGE_KEYS = {
   MEMORIES: 'love_archive_memories_v1',
-  LETTERS: 'love_archive_letters_v1',
+  LETTERS: 'love_archive_letters_v3',
   FUTURE: 'love_archive_future_v1',
   AUTH: 'love_archive_auth_session',
   SETTINGS: 'love_archive_settings_v1',

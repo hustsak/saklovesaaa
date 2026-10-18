@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Trash2, Edit3, Save, X, LogOut, Image, Film, FileText, Check } from 'lucide-react';
 import { sound } from '../../utils/audioSynthesizer';
 import { clearAdminSession } from '../../utils/storage';
+import { formatReadableDate } from '../../utils/dateUtils';
 
 export default function AdminDashboard({
   memories,
@@ -17,8 +18,8 @@ export default function AdminDashboard({
 
   // Form State for Memory
   const [formTitle, setFormTitle] = useState('');
-  const [formDate, setFormDate] = useState('2026-09-08');
-  const [formDisplayDate, setFormDisplayDate] = useState('09.08.2026');
+  const [formDate, setFormDate] = useState('2023-12-09');
+  const [formDisplayDate, setFormDisplayDate] = useState('09 DEC 2023');
   const [formTime, setFormTime] = useState('14:32');
   const [formLocation, setFormLocation] = useState('Phnom Penh');
   const [formImageUrl, setFormImageUrl] = useState('');
@@ -31,8 +32,8 @@ export default function AdminDashboard({
     setIsCreatingNew(true);
     setEditingMemory(null);
     setFormTitle('Sunset Walk by the Riverside');
-    setFormDate('2026-09-08');
-    setFormDisplayDate('09.08.2026');
+    setFormDate('2023-12-09');
+    setFormDisplayDate('09 DEC 2023');
     setFormTime('17:45');
     setFormLocation('Phnom Penh');
     setFormImageUrl('https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=1200&q=80');
@@ -46,8 +47,8 @@ export default function AdminDashboard({
     setIsCreatingNew(false);
     setEditingMemory(mem);
     setFormTitle(mem.title);
-    setFormDate(mem.date || '2026-09-08');
-    setFormDisplayDate(mem.displayDate || '09.08.2026');
+    setFormDate(mem.date || '2023-12-09');
+    setFormDisplayDate(formatReadableDate(mem.date || mem.displayDate));
     setFormTime(mem.time || '14:32');
     setFormLocation(mem.location || 'Phnom Penh');
     setFormImageUrl(mem.imageUrl);
@@ -68,12 +69,14 @@ export default function AdminDashboard({
     e.preventDefault();
     sound.playTapeClick();
 
+    const formattedDisplayDate = formatReadableDate(formDisplayDate || formDate);
+
     if (isCreatingNew) {
       const newEntry = {
         id: `mem-${Date.now()}`,
         title: formTitle,
         date: formDate,
-        displayDate: formDisplayDate,
+        displayDate: formattedDisplayDate,
         time: formTime,
         location: formLocation,
         imageUrl: formImageUrl || 'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=1200&q=80',
@@ -92,7 +95,7 @@ export default function AdminDashboard({
             ...m,
             title: formTitle,
             date: formDate,
-            displayDate: formDisplayDate,
+            displayDate: formattedDisplayDate,
             time: formTime,
             location: formLocation,
             imageUrl: formImageUrl,

@@ -206,6 +206,34 @@ class SoundEngine {
     } catch (e) {}
   }
 
+  // Gentle celestial bell chime for interactive stars & cosmos
+  playStarChime(baseFreq = 880) {
+    if (this.isMuted) return;
+    try {
+      this.init();
+      const t = this.ctx.currentTime;
+      const harmonics = [baseFreq, baseFreq * 1.5, baseFreq * 2];
+      harmonics.forEach((freq, idx) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, t);
+
+        const volume = 0.06 / (idx + 1);
+        gain.gain.setValueAtTime(0.0001, t);
+        gain.gain.linearRampToValueAtTime(volume, t + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + 1.2 + idx * 0.3);
+
+        osc.connect(gain);
+        gain.connect(this.sfxGain);
+        osc.start(t);
+        osc.stop(t + 1.6);
+      });
+    } catch (e) {
+      console.warn('Star chime error:', e);
+    }
+  }
+
   // Dreamy Lo-Fi Ambient Romantic chords generator
   // Beautiful, peaceful, warm vintage Rhodes/Tape synthesizer chords
   startAmbientMusic(trackIndex = 0) {

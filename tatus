@@ -1,0 +1,27 @@
+warning: in the working copy of 'src/App.css', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/App.jsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/Admin/AdminDashboard.jsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/DesktopOS/LoveLetters.jsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/DesktopOS/RetroDesktop.jsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/Navigation/RetroNavBar.jsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/PhotoAlbum/MemoryModal.jsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/PhotoAlbum/PolaroidAlbum.jsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/PhotoUpload/PhonePhotoUploader.jsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/Sections/HomeHero.jsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/utils/audioSynthesizer.js', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/utils/defaultMemories.js', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/utils/storage.js', LF will be replaced by CRLF the next time Git touches it
+ src/App.css                                       |  19 [32m++[m
+ src/App.jsx                                       |  61 [32m+++[m[31m--[m
+ src/components/Admin/AdminDashboard.jsx           |  19 [32m+[m[31m-[m
+ src/components/DesktopOS/LoveLetters.jsx          | 275 [32m+++++++++++++[m[31m---------[m
+ src/components/DesktopOS/RetroDesktop.jsx         |  71 [32m+[m[31m-----[m
+ src/components/Navigation/RetroNavBar.jsx         |   2 [32m+[m[31m-[m
+ src/components/PhotoAlbum/MemoryModal.jsx         |  38 [32m+[m[31m--[m
+ src/components/PhotoAlbum/PolaroidAlbum.jsx       | 133 [32m++++++++++[m[31m-[m
+ src/components/PhotoUpload/PhonePhotoUploader.jsx | 117 [32m+++++++[m[31m--[m
+ src/components/Sections/HomeHero.jsx              |   4 [32m+[m
+ src/utils/audioSynthesizer.js                     |  28 [32m+++[m
+ src/utils/defaultMemories.js                      |  72 [32m++[m[31m----[m
+ src/utils/storage.js                              |   2 [32m+[m[31m-[m
+ 13 files changed, 547 insertions(+), 294 deletions(-)

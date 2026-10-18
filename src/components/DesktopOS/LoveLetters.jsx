@@ -1,145 +1,159 @@
 import React, { useState } from 'react';
-import { Mail, Heart, Calendar, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowLeft, Mail, Heart } from 'lucide-react';
 import { sound } from '../../utils/audioSynthesizer';
 import EditableText from '../Admin/EditableText';
+import './LoveLetters.css';
 
 export default function LoveLetters({ letters }) {
-  const [selectedLetter, setSelectedLetter] = useState(letters[0]);
+  // If user hasn't selected a letter yet, show the 4 envelopes waiting to be opened
+  const [selectedLetter, setSelectedLetter] = useState(null);
+
+  const currentIndex = letters && selectedLetter
+    ? letters.findIndex((l) => l.id === selectedLetter.id)
+    : -1;
+
+  const handleOpenLetter = (letter) => {
+    sound.playTapeClick();
+    setSelectedLetter(letter);
+  };
+
+  const handleFoldLetter = () => {
+    sound.playTapeClick();
+    setSelectedLetter(null);
+  };
+
+  const handleNavigate = (newIndex) => {
+    if (letters && letters[newIndex]) {
+      sound.playTapeClick();
+      setSelectedLetter(letters[newIndex]);
+    }
+  };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      {/* Letter List View / Envelopes */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '12px'
-        }}
-      >
-        {letters.map((letter) => {
-          const isSelected = selectedLetter?.id === letter.id;
-          return (
+    <div className="love-letters-wrapper">
+      {/* ===================================================================
+          1. ENVELOPE SELECTION VIEW (When no letter is currently unfolded)
+          =================================================================== */}
+      {!selectedLetter && (
+        <div className="envelopes-showcase" role="region" aria-label="Love letter envelopes">
+          {letters && letters.map((letter, idx) => (
             <button
               key={letter.id}
-              onClick={() => {
-                sound.playTapeClick();
-                setSelectedLetter(letter);
-              }}
-              style={{
-                background: isSelected ? 'var(--retro-champagne-light)' : 'var(--retro-cream)',
-                border: isSelected ? '2px solid var(--retro-burgundy)' : '1.5px solid var(--retro-charcoal)',
-                borderRadius: '4px',
-                padding: '12px',
-                textAlign: 'left',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                boxShadow: isSelected ? '2px 2px 0px var(--retro-burgundy)' : '1px 1px 0px var(--retro-charcoal)',
-                transition: 'all 0.15s ease'
-              }}
+              onClick={() => handleOpenLetter(letter)}
+              className="physical-envelope"
+              aria-label={`Open letter ${idx + 1}: ${letter.title}`}
             >
-              <div style={{ fontSize: '1.4rem' }}>💌</div>
-              <div>
-                <div
+              {/* Postage Stamp */}
+              <div className="envelope-postage-stamp" aria-hidden="true">
+                💌
+              </div>
+
+              {/* Envelope Letter Sequence */}
+              <div style={{ position: 'absolute', top: '14px', left: '16px' }}>
+                <span
                   style={{
                     fontFamily: 'var(--font-mono)',
-                    fontSize: '0.78rem',
+                    fontSize: '0.65rem',
+                    letterSpacing: '1.5px',
+                    color: '#682A36',
                     fontWeight: 700,
-                    color: 'var(--retro-charcoal)'
+                    textTransform: 'uppercase',
+                    background: 'rgba(104, 42, 54, 0.08)',
+                    padding: '2px 8px',
+                    borderRadius: '3px'
                   }}
                 >
+                  Letter 0{idx + 1}
+                </span>
+              </div>
+
+              {/* Handwritten Title on Envelope (Only Open when...) */}
+              <div style={{ margin: 'auto 0', textAlign: 'center', width: '100%' }}>
+                <h3 className="envelope-handwritten-label">
                   {letter.title}
-                </div>
-                <div
-                  style={{
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: '0.68rem',
-                    color: 'var(--retro-brown)',
-                    marginTop: '2px'
-                  }}
-                >
-                  {letter.subtitle}
-                </div>
+                </h3>
               </div>
             </button>
-          );
-        })}
-      </div>
+          ))}
+        </div>
+      )}
 
-      {/* Letter Content Reader */}
+      {/* ===================================================================
+          2. UNFOLDED KEEPSAKE LETTER PAPER (When a letter is opened)
+          =================================================================== */}
       {selectedLetter && (
-        <div
-          style={{
-            background: 'var(--retro-offwhite)',
-            border: '1.5px solid var(--retro-border)',
-            borderRadius: '4px',
-            padding: '24px',
-            position: 'relative',
-            boxShadow: 'inset 0 0 25px rgba(221, 210, 193, 0.45)',
-            marginTop: '8px'
-          }}
-        >
-          {/* Wax Seal Stamp */}
+        <article className="keepsake-letter-paper" role="article" aria-label={selectedLetter.title}>
+          {/* Top Bar: Discreet Back Control + Letter Index + Wax Seal */}
           <div
             style={{
-              position: 'absolute',
-              top: '18px',
-              right: '18px',
-              width: '42px',
-              height: '42px',
-              borderRadius: '50%',
-              background: 'var(--retro-burgundy)',
-              color: 'var(--retro-champagne)',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              fontFamily: 'var(--font-pixel)',
-              fontSize: '1.1rem',
-              fontWeight: 700,
-              boxShadow: '0 3px 6px rgba(104, 42, 54, 0.35)',
-              transform: 'rotate(-8deg)'
+              justifyContent: 'space-between',
+              gap: '16px',
+              borderBottom: '1px dashed rgba(188, 168, 145, 0.5)',
+              paddingBottom: '16px',
+              marginBottom: '28px'
             }}
-            title="Sealed with love"
           >
-            S♥S
+            {/* Discreet Back Button */}
+            <button
+              onClick={handleFoldLetter}
+              className="keepsake-back-btn"
+              title="Fold this letter and return to envelope selection"
+            >
+              <ArrowLeft size={13} />
+              <span>← Fold &amp; Return to Envelopes</span>
+            </button>
+
+            {/* Letter Sequence Counter & Wax Seal */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+              <span
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.72rem',
+                  letterSpacing: '1px',
+                  color: '#682A36',
+                  fontWeight: 600,
+                  textTransform: 'uppercase'
+                }}
+              >
+                {currentIndex >= 0 ? `Letter ${currentIndex + 1} of ${letters.length}` : ''}
+              </span>
+
+              {/* Burgundy Embossed Wax Seal */}
+              <div className="keepsake-wax-seal" title="Sealed with love: S♥S">
+                S♥S
+              </div>
+            </div>
           </div>
 
-          <div
-            style={{
-              fontFamily: 'var(--font-pixel)',
-              fontSize: '1rem',
-              color: 'var(--retro-brown)',
-              marginBottom: '6px'
-            }}
-          >
-            [ DATE: {selectedLetter.date || 'Timeless'} ]
+          {/* Letter Title Header */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+            <span style={{ fontSize: '1.4rem' }}>💌</span>
+            <span
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.72rem',
+                letterSpacing: '2px',
+                color: '#682A36',
+                fontWeight: 700,
+                textTransform: 'uppercase'
+              }}
+            >
+              CONFIDENTIAL &bull; FOR CHANREAKSA’S EYES ONLY
+            </span>
           </div>
 
-          <h3
-            style={{
-              fontFamily: 'var(--font-serif)',
-              fontSize: '1.6rem',
-              color: 'var(--retro-charcoal)',
-              marginBottom: '16px'
-            }}
-          >
+          <h2 className="keepsake-letter-title">
             <EditableText
               textKey={`letter_${selectedLetter.id}_title`}
               defaultText={selectedLetter.title}
               as="span"
             />
-          </h3>
+          </h2>
 
-          <div
-            style={{
-              fontFamily: 'var(--font-serif)',
-              fontSize: '1.05rem',
-              lineHeight: 1.8,
-              color: 'var(--retro-charcoal-light)',
-              whiteSpace: 'pre-line',
-              fontStyle: 'italic'
-            }}
-          >
+          {/* Letter Body in Pure Natural Handwriting */}
+          <div className="keepsake-letter-body">
             <EditableText
               textKey={`letter_${selectedLetter.id}_content`}
               defaultText={selectedLetter.content}
@@ -147,7 +161,54 @@ export default function LoveLetters({ letters }) {
               multiline={true}
             />
           </div>
-        </div>
+
+          {/* Signature & Date Section */}
+          <div className="keepsake-signature-section">
+            <div className="keepsake-signature-text">
+              {selectedLetter.signature || 'S♥S'}
+              <span style={{ fontSize: '1.4rem', color: '#682A36' }}>♡</span>
+            </div>
+
+            <div className="keepsake-letter-date">
+              {selectedLetter.date || 'Written on a rainy evening, while thinking about you.'}
+            </div>
+          </div>
+
+          {/* Bottom Action Bar: Fold Control + Prev/Next Navigation */}
+          <div className="keepsake-action-bar">
+            <button
+              onClick={handleFoldLetter}
+              className="keepsake-back-btn"
+              title="Fold letter and put it back in memory box"
+            >
+              <span>✉ Fold letter &amp; put away</span>
+            </button>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {currentIndex > 0 && (
+                <button
+                  onClick={() => handleNavigate(currentIndex - 1)}
+                  className="keepsake-nav-btn"
+                  title="Read previous letter"
+                >
+                  <ChevronLeft size={13} />
+                  <span>Previous</span>
+                </button>
+              )}
+
+              {currentIndex < (letters ? letters.length - 1 : 0) && (
+                <button
+                  onClick={() => handleNavigate(currentIndex + 1)}
+                  className="keepsake-nav-btn primary"
+                  title="Read next letter"
+                >
+                  <span>Next Letter ♡</span>
+                  <ChevronRight size={13} />
+                </button>
+              )}
+            </div>
+          </div>
+        </article>
       )}
     </div>
   );

@@ -24,7 +24,7 @@ export default function RetroNavBar({
     { id: 'story', label: 'STORY' },
     { id: 'memories', label: 'MEMORIES' },
     { id: 'letters', label: 'LETTERS' },
-    { id: 'future', label: 'FUTURE' }
+    { id: 'universe', label: 'UNIVERSE' }
   ];
 
   const handleTabClick = (tabId) => {

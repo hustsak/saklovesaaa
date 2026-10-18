@@ -1,0 +1,303 @@
+/* ==========================================================================
+   A LITTLE UNIVERSE — Interactive Cosmic Experience
+   ========================================================================== */
+
+.universe-section-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 50px 20px 80px 20px;
+  box-sizing: border-box;
+}
+
+/* Header */
+.universe-header {
+  text-align: center;
+  margin-bottom: 26px;
+  position: relative;
+  z-index: 5;
+}
+
+.universe-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-pixel, monospace);
+  font-size: 0.8rem;
+  letter-spacing: 2.5px;
+  color: var(--retro-burgundy, #6b2836);
+  margin-bottom: 8px;
+}
+
+.universe-title {
+  font-family: var(--font-serif, "Playfair Display", Georgia, serif);
+  font-size: clamp(2rem, 4.4vw, 3.1rem);
+  font-weight: 600;
+  color: var(--retro-charcoal, #1c1b1a);
+  letter-spacing: -0.5px;
+  margin: 0 0 6px 0;
+  line-height: 1.15;
+}
+
+.universe-subtitle {
+  font-family: var(--font-mono, monospace);
+  font-size: clamp(0.82rem, 1.8vw, 0.95rem);
+  color: var(--retro-burgundy, #682A36);
+  letter-spacing: 1.2px;
+  margin: 0;
+  font-style: italic;
+  font-weight: 600;
+  opacity: 0.95;
+}
+
+/* Cosmic Viewport Frame */
+.universe-viewport-frame {
+  position: relative;
+  width: 100%;
+  height: clamp(520px, 76vh, 740px);
+  background: #060814;
+  border-radius: 10px;
+  border: 1.5px solid var(--retro-charcoal, #2a2224);
+  box-shadow: 
+    0 18px 45px rgba(10, 8, 20, 0.45),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  user-select: none;
+  touch-action: pan-y pinch-zoom;
+}
+
+/* Vignette & Soft Gradient Frame Overlay */
+.universe-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 50%,
+    transparent 55%,
+    rgba(6, 8, 20, 0.5) 85%,
+    rgba(6, 8, 20, 0.9) 100%
+  );
+  z-index: 2;
+}
+
+/* Canvas Element */
+.universe-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 1;
+  cursor: crosshair;
+}
+
+/* Viewport HUD Controls */
+.universe-hud-bar {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.universe-hud-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.7rem;
+  letter-spacing: 1.5px;
+  color: rgba(225, 230, 255, 0.7);
+  background: rgba(10, 14, 28, 0.65);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 4px 10px;
+  border-radius: 3px;
+  pointer-events: auto;
+}
+
+.universe-hud-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #739AF0;
+  box-shadow: 0 0 6px rgba(115, 154, 240, 0.9);
+  animation: universeBlink 2.4s infinite ease-in-out;
+}
+
+@keyframes universeBlink {
+  0%, 100% { opacity: 0.35; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+.universe-hud-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+.universe-btn-icon {
+  background: rgba(10, 14, 28, 0.65);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(235, 240, 255, 0.85);
+  padding: 5px 10px;
+  border-radius: 3px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.68rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s ease;
+}
+
+.universe-btn-icon:hover {
+  background: rgba(26, 32, 58, 0.85);
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.universe-btn-icon:focus-visible {
+  outline: 2px solid #A4C2F4;
+  outline-offset: 2px;
+}
+
+/* Floating Poetic Whisper Pill */
+.universe-whisper-card {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 90%;
+  width: 520px;
+  background: rgba(6, 9, 22, 0.92);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(210, 225, 255, 0.3);
+  box-shadow: 
+    0 20px 45px rgba(0, 0, 0, 0.75),
+    0 0 35px rgba(90, 130, 225, 0.22);
+  border-radius: 8px;
+  padding: 16px 22px 14px 22px;
+  color: #E8EEFF;
+  z-index: 25;
+  text-align: center;
+  animation: whisperFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  pointer-events: auto;
+}
+
+@keyframes whisperFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+.whisper-source-badge {
+  font-family: var(--font-pixel, monospace);
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  color: #A9BCE8;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.whisper-message-text {
+  font-family: var(--font-serif, "Playfair Display", Georgia, serif);
+  font-size: clamp(0.98rem, 2.2vw, 1.15rem);
+  line-height: 1.45;
+  color: #F8F9FE;
+  font-style: italic;
+  margin: 0 0 6px 0;
+}
+
+.whisper-dismiss-btn {
+  background: transparent;
+  border: none;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.62rem;
+  letter-spacing: 1px;
+  color: rgba(200, 210, 240, 0.6);
+  cursor: pointer;
+  padding: 2px 6px;
+  transition: color 0.15s ease;
+}
+
+.whisper-dismiss-btn:hover {
+  color: #FFFFFF;
+}
+
+/* Keyboard Accessible Interaction Overlay */
+.universe-a11y-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.universe-a11y-target {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px dashed transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  padding: 0;
+}
+
+.universe-a11y-target:focus-visible {
+  outline: 2px solid #D2E3FC;
+  outline-offset: 4px;
+  border-color: rgba(210, 227, 252, 0.6);
+  background: rgba(210, 227, 252, 0.08);
+}
+
+/* Stargazer Footnote Hint */
+.universe-footer-hint {
+  text-align: center;
+  margin-top: 14px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  color: var(--retro-brown, #5c4e4b);
+  letter-spacing: 1.5px;
+  opacity: 0.75;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .universe-section-wrapper {
+    padding: 35px 14px 60px 14px;
+  }
+  .universe-viewport-frame {
+    height: 460px;
+    border-radius: 6px;
+  }
+  .universe-whisper-card {
+    width: 92%;
+    bottom: 16px;
+    padding: 12px 16px;
+  }
+  .universe-hud-bar {
+    top: 10px;
+    left: 10px;
+    right: 10px;
+  }
+}

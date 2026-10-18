@@ -3,6 +3,7 @@ import { ChevronDown } from 'lucide-react';
 import { sound } from '../../utils/audioSynthesizer';
 import EditableText from '../Admin/EditableText';
 import EditableImage from '../Admin/EditableImage';
+import DaysTogetherCounter from '../Common/DaysTogetherCounter';
 
 export default function HomeHero({ onExploreMemories }) {
   const handleScrollClick = () => {
@@ -138,6 +139,9 @@ export default function HomeHero({ onExploreMemories }) {
           />
         </span>
       </h1>
+
+      {/* Live Days-Together Counter (09 DEC 2023) */}
+      <DaysTogetherCounter />
 
       {/* Subtle Scroll Down Prompt to Enter Story */}
       <div

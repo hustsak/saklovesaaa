@@ -3,6 +3,7 @@ import { X, ChevronLeft, ChevronRight, Calendar, Clock, MapPin, Camera, Edit3, C
 import { sound } from '../../utils/audioSynthesizer';
 import ImageCropperModal from '../PhotoUpload/ImageCropperModal';
 import { uploadImageWithFallback } from '../../utils/imageUploader';
+import { formatReadableDate } from '../../utils/dateUtils';
 
 export default function MemoryModal({
   memory,
@@ -13,8 +14,6 @@ export default function MemoryModal({
   adminUser,
   onRequireAdminLogin
 }) {
-  if (!memory) return null;
-
   const fileInputRef = useRef(null);
   const [rawCropImage, setRawCropImage] = useState(null);
   const [rawPhotoFile, setRawPhotoFile] = useState(null);
@@ -22,19 +21,19 @@ export default function MemoryModal({
   const [isReplacingPhoto, setIsReplacingPhoto] = useState(false);
 
   const [isEditing, setIsEditing] = useState(false);
-  const [editTitle, setEditTitle] = useState(memory.title);
-  const [editDateISO, setEditDateISO] = useState(memory.date || '2026-09-08');
-  const [editDisplayDate, setEditDisplayDate] = useState(memory.displayDate || '09.08.2026');
-  const [editTime, setEditTime] = useState(memory.time || '14:32');
-  const [editLocation, setEditLocation] = useState(memory.location || 'Phnom Penh');
-  const [editHandwritten, setEditHandwritten] = useState(memory.handwrittenNote || '');
-  const [editJournal, setEditJournal] = useState(memory.journalEntry || memory.caption || '');
+  const [editTitle, setEditTitle] = useState(() => memory?.title || '');
+  const [editDateISO, setEditDateISO] = useState(() => memory?.date || '2023-12-09');
+  const [editDisplayDate, setEditDisplayDate] = useState(() => formatReadableDate(memory?.date || memory?.displayDate));
+  const [editTime, setEditTime] = useState(() => memory?.time || '14:32');
+  const [editLocation, setEditLocation] = useState(() => memory?.location || 'Phnom Penh');
+  const [editHandwritten, setEditHandwritten] = useState(() => memory?.handwrittenNote || '');
+  const [editJournal, setEditJournal] = useState(() => memory?.journalEntry || memory?.caption || '');
 
   useEffect(() => {
     if (memory) {
-      setEditTitle(memory.title);
-      setEditDateISO(memory.date || '2026-09-08');
-      setEditDisplayDate(memory.displayDate || '09.08.2026');
+      setEditTitle(memory.title || '');
+      setEditDateISO(memory.date || '2023-12-09');
+      setEditDisplayDate(formatReadableDate(memory.date || memory.displayDate));
       setEditTime(memory.time || '14:32');
       setEditLocation(memory.location || 'Phnom Penh');
       setEditHandwritten(memory.handwrittenNote || '');
@@ -42,6 +41,8 @@ export default function MemoryModal({
       setIsEditing(false);
     }
   }, [memory]);
+
+  if (!memory) return null;
 
   const currentIndex = memories.findIndex((m) => m.id === memory.id);
   const prevMemory = memories[(currentIndex - 1 + memories.length) % memories.length];
@@ -62,10 +63,7 @@ export default function MemoryModal({
   const handleDateChange = (newIso) => {
     setEditDateISO(newIso);
     if (newIso) {
-      const parts = newIso.split('-');
-      if (parts.length === 3) {
-        setEditDisplayDate(`${parts[1]}.${parts[2]}.${parts[0]}`);
-      }
+      setEditDisplayDate(formatReadableDate(newIso));
     }
   };
 
@@ -77,11 +75,13 @@ export default function MemoryModal({
       ? (editHandwritten.startsWith('“') ? editHandwritten : `“${editHandwritten}”`)
       : memory.handwrittenNote;
 
+    const formattedDisplayDate = formatReadableDate(editDateISO || editDisplayDate);
+
     const updated = {
       ...memory,
       title: editTitle,
       date: editDateISO,
-      displayDate: editDisplayDate,
+      displayDate: formattedDisplayDate,
       time: editTime,
       location: editLocation,
       handwrittenNote: formattedNote,
@@ -304,7 +304,7 @@ export default function MemoryModal({
                 justifyContent: 'space-between'
               }}
             >
-              <div>{memory.displayDate}</div>
+              <div>{formatReadableDate(memory.date || memory.displayDate)}</div>
               <div>{memory.location}</div>
             </div>
 
@@ -516,7 +516,7 @@ export default function MemoryModal({
                   }}
                 >
                   <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Calendar size={13} /> {memory.displayDate}
+                    <Calendar size={13} /> {formatReadableDate(memory.date || memory.displayDate)}
                   </span>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <Clock size={13} /> {memory.time}

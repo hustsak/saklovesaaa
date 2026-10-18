@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import WindowFrame from './WindowFrame';
 import LoveLetters from './LoveLetters';
+import LittleUniverse from '../Sections/LittleUniverse';
 import { sound } from '../../utils/audioSynthesizer';
 import { Sparkles, Calendar, MapPin, ExternalLink, Heart, Play, Pause, SkipBack, SkipForward, Upload, Music, Loader2, Volume2 } from 'lucide-react';
 
 export default function RetroDesktop({
   memories,
   letters,
-  futurePlans,
   onSelectMemory,
   musicPlayer
 }) {
@@ -15,7 +15,7 @@ export default function RetroDesktop({
     memories: false,
     photos: false,
     letters: true,
-    future: false,
+    universe: false,
     favorites: false,
     music: false
   });
@@ -43,7 +43,7 @@ export default function RetroDesktop({
     { id: 'memories', label: 'OUR MEMORIES', icon: '📁' },
     { id: 'photos', label: 'PHOTOS', icon: '🖼️' },
     { id: 'letters', label: 'LOVE LETTERS', icon: '💌' },
-    { id: 'future', label: 'FUTURE', icon: '🚀' },
+    { id: 'universe', label: 'THE UNIVERSE', icon: '🌌' },
     { id: 'favorites', label: 'FAVORITES', icon: '💾' },
     { id: 'music', label: 'OUR MUSIC', icon: '🎵' }
   ];
@@ -195,64 +195,17 @@ export default function RetroDesktop({
         </div>
       </WindowFrame>
 
-      {/* --- WINDOW 4: FUTURE ROADMAP --- */}
+
+
+      {/* --- WINDOW 4: A LITTLE UNIVERSE --- */}
       <WindowFrame
-        title="OUR FUTURE ARCHIVE &bull; PROMISES &amp; DREAMS"
-        icon="🚀"
-        isOpen={openWindows.future}
-        onClose={() => closeWindow('future')}
-        width="720px"
+        title="A LITTLE UNIVERSE &bull; COSMIC OBSERVATORY"
+        icon="🌌"
+        isOpen={openWindows.universe}
+        onClose={() => closeWindow('universe')}
+        width="820px"
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-          {futurePlans.map((plan) => (
-            <div
-              key={plan.id}
-              style={{
-                background: 'var(--retro-offwhite)',
-                border: '1.5px solid var(--retro-border)',
-                borderRadius: '4px',
-                padding: '16px',
-                display: 'flex',
-                gap: '16px',
-                alignItems: 'flex-start'
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: 'var(--font-pixel)',
-                  fontSize: '1.8rem',
-                  fontWeight: 700,
-                  color: 'var(--retro-burgundy)',
-                  minWidth: '70px'
-                }}
-              >
-                {plan.year}
-              </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.15rem', color: 'var(--retro-charcoal)' }}>
-                    {plan.title}
-                  </h4>
-                  <span
-                    style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.65rem',
-                      background: 'var(--retro-cream-dark)',
-                      padding: '2px 8px',
-                      borderRadius: '2px',
-                      border: '1px solid var(--retro-border)'
-                    }}
-                  >
-                    {plan.badge}
-                  </span>
-                </div>
-                <p style={{ fontFamily: 'var(--font-sans)', fontSize: '0.88rem', color: 'var(--retro-brown)', marginTop: '4px', lineHeight: 1.5 }}>
-                  {plan.description}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
+        <LittleUniverse />
       </WindowFrame>
 
       {/* --- WINDOW 5: FAVORITES / FLOPPY --- */}

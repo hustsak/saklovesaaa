@@ -7,8 +7,8 @@ import HomeHero from './components/Sections/HomeHero';
 import StoryTimeline from './components/Sections/StoryTimeline';
 import PolaroidAlbum from './components/PhotoAlbum/PolaroidAlbum';
 import MemoryModal from './components/PhotoAlbum/MemoryModal';
-import FutureView from './components/Sections/FutureView';
 import LoveLetters from './components/DesktopOS/LoveLetters';
+import LittleUniverse from './components/Sections/LittleUniverse';
 import RetroDesktop from './components/DesktopOS/RetroDesktop';
 import CassettePlayer from './components/MusicPlayer/CassettePlayer';
 import RetroLoginModal from './components/Admin/RetroLoginModal';
@@ -23,8 +23,6 @@ import {
   saveStoredMemories,
   getStoredLetters,
   saveStoredLetters,
-  getStoredFuturePlans,
-  saveStoredFuturePlans,
   getAdminSession
 } from './utils/storage';
 import { subscribeMemoriesFromFirestore } from './utils/firebase';
@@ -43,7 +41,6 @@ export default function App() {
   // Data State
   const [memories, setMemories] = useState(getStoredMemories);
   const [letters, setLetters] = useState(getStoredLetters);
-  const [futurePlans, setFuturePlans] = useState(getStoredFuturePlans);
 
   // Modals & Active Selections
   const [selectedMemory, setSelectedMemory] = useState(null);
@@ -86,7 +83,7 @@ export default function App() {
   useEffect(() => {
     const handleScroll = () => {
       if (isDesktopView) return;
-      const sections = ['home', 'story', 'memories', 'letters', 'future'];
+      const sections = ['home', 'story', 'memories', 'letters', 'universe'];
       const scrollPos = window.scrollY + 140;
 
       for (let i = sections.length - 1; i >= 0; i--) {
@@ -286,7 +283,6 @@ export default function App() {
           <RetroDesktop
             memories={memories}
             letters={letters}
-            futurePlans={futurePlans}
             onSelectMemory={(m) => setSelectedMemory(m)}
             musicPlayer={musicPlayer}
           />
@@ -338,29 +334,44 @@ export default function App() {
               <div className="section-divider-line" />
             </div>
 
-            {/* 4. LETTERS SECTION */}
-            <section id="letters" style={{ maxWidth: '820px', margin: '0 auto', padding: '40px 20px 60px 20px' }}>
-              <div style={{ textAlign: 'center', marginBottom: '36px' }}>
-                <div
-                  style={{
-                    fontFamily: 'var(--font-pixel)',
-                    fontSize: '1.15rem',
-                    color: 'var(--retro-burgundy)',
-                    marginBottom: '6px'
-                  }}
-                >
-                  CONFIDENTIAL &bull; FOR CHANREAKSA’S EYES ONLY
+            {/* 4. LETTERS SECTION ("OPEN WHEN YOU NEED ME") */}
+            <section id="letters" style={{ maxWidth: '820px', margin: '0 auto', padding: '50px 20px 70px 20px' }}>
+              <div style={{ textAlign: 'center', marginBottom: '44px' }}>
+                {/* Handwritten Heart & Envelope Illustration */}
+                <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: '14px' }}>
+                  <svg width="42" height="42" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ opacity: 0.9 }}>
+                    <path d="M22 36C22 36 7 26.5 7 15.5C7 10 11.5 5.5 17 5.5C20.3 5.5 22 7.7 22 7.7C22 7.7 23.7 5.5 27 5.5C32.5 5.5 37 10 37 15.5C37 26.5 22 36 22 36Z" stroke="#682A36" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="rgba(104, 42, 54, 0.08)"/>
+                    <path d="M14 15L22 21.5L30 15" stroke="#682A36" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
                 </div>
+
+                {/* Main Title */}
                 <h2
                   style={{
                     fontFamily: 'var(--font-serif)',
-                    fontSize: 'clamp(2rem, 4vw, 2.8rem)',
+                    fontSize: 'clamp(2.2rem, 4.5vw, 3.2rem)',
                     color: 'var(--retro-charcoal)',
-                    fontWeight: 600
+                    fontWeight: 600,
+                    letterSpacing: '-0.5px',
+                    marginBottom: '10px',
+                    lineHeight: 1.2
                   }}
                 >
-                  Open When You Need Me
+                  ♡ Open When You Need Me
                 </h2>
+
+                {/* Subtle Handwritten Subtitle */}
+                <p
+                  style={{
+                    fontFamily: "'Caveat', cursive",
+                    fontSize: 'clamp(1.25rem, 2.6vw, 1.55rem)',
+                    color: 'var(--retro-brown)',
+                    fontWeight: 500,
+                    margin: 0
+                  }}
+                >
+                  A few little words, for whenever you need them.
+                </p>
               </div>
               <LoveLetters letters={letters} />
             </section>
@@ -368,14 +379,14 @@ export default function App() {
             <div className="section-divider-film">
               <div className="section-divider-line" />
               <span style={{ fontFamily: 'var(--font-pixel)', fontSize: '0.85rem', color: 'var(--retro-burgundy)', letterSpacing: '2px' }}>
-                ✦ OUR HORIZONS &bull; 2026+ ✦
+                ✦ A LITTLE UNIVERSE &bull; COSMOS ✦
               </span>
               <div className="section-divider-line" />
             </div>
 
-            {/* 5. FUTURE SECTION */}
-            <section id="future">
-              <FutureView futurePlans={futurePlans} />
+            {/* 5. A LITTLE UNIVERSE SECTION */}
+            <section id="universe">
+              <LittleUniverse />
             </section>
           </div>
         )}

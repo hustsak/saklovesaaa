@@ -1,9 +1,10 @@
 import React, { useState, useRef } from 'react';
-import { Camera, Upload, X, Check, Sparkles, MapPin, Calendar, Clock, Loader2, Tag, Crop } from 'lucide-react';
+import { Camera, Upload, X, MapPin, Calendar, Clock, Loader2, Tag, Crop } from 'lucide-react';
 import { uploadImageWithFallback } from '../../utils/imageUploader';
 import { sound } from '../../utils/audioSynthesizer';
 import ImageCropperModal from './ImageCropperModal';
 import confetti from 'canvas-confetti';
+import { extractExifDate, getFallbackPhotoDate, formatReadableDate } from '../../utils/dateUtils';
 
 export default function PhonePhotoUploader({ isOpen, onClose, onSaveNewMemory, adminUser }) {
   const fileInputRef = useRef(null);
@@ -15,6 +16,7 @@ export default function PhonePhotoUploader({ isOpen, onClose, onSaveNewMemory, a
   const [isProcessing, setIsProcessing] = useState(false);
   const [isDeveloping, setIsDeveloping] = useState(false);
   const [uploadError, setUploadError] = useState('');
+  const [dateSource, setDateSource] = useState('auto'); // 'exif', 'upload', 'manual'
 
   // Form Metadata
   const [title, setTitle] = useState('Afternoon in Phnom Penh');
@@ -24,18 +26,16 @@ export default function PhonePhotoUploader({ isOpen, onClose, onSaveNewMemory, a
 
   // Date State with Native Picker + Display sync
   const [dateISO, setDateISO] = useState(() => {
-    const now = new Date();
-    return now.toISOString().split('T')[0];
+    const initial = getFallbackPhotoDate();
+    return initial.dateISO;
   });
   const [displayDate, setDisplayDate] = useState(() => {
-    const now = new Date();
-    const mm = String(now.getMonth() + 1).padStart(2, '0');
-    const dd = String(now.getDate()).padStart(2, '0');
-    return `${mm}.${dd}.${now.getFullYear()}`;
+    const initial = getFallbackPhotoDate();
+    return initial.displayDate;
   });
   const [time, setTime] = useState(() => {
-    const now = new Date();
-    return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    const initial = getFallbackPhotoDate();
+    return initial.time;
   });
 
   if (!isOpen) return null;
@@ -44,14 +44,12 @@ export default function PhonePhotoUploader({ isOpen, onClose, onSaveNewMemory, a
   const handleDateChange = (newIso) => {
     setDateISO(newIso);
     if (newIso) {
-      const parts = newIso.split('-');
-      if (parts.length === 3) {
-        setDisplayDate(`${parts[1]}.${parts[2]}.${parts[0]}`);
-      }
+      setDisplayDate(formatReadableDate(newIso));
     }
+    setDateSource('manual');
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -59,6 +57,31 @@ export default function PhonePhotoUploader({ isOpen, onClose, onSaveNewMemory, a
     setIsProcessing(true);
     setUploadError('');
     setSelectedFile(file);
+
+    // Feature 1: Automatically extract original capture date from EXIF metadata
+    try {
+      const exif = await extractExifDate(file);
+      if (exif) {
+        setDateISO(exif.dateISO);
+        setDisplayDate(exif.displayDate);
+        setTime(exif.time);
+        setDateSource('exif');
+      } else {
+        // Fall back to upload / file creation date if EXIF is absent or invalid
+        const fallback = getFallbackPhotoDate(file);
+        setDateISO(fallback.dateISO);
+        setDisplayDate(fallback.displayDate);
+        setTime(fallback.time);
+        setDateSource('upload');
+      }
+    } catch (dateErr) {
+      console.warn('EXIF read notice (using fallback):', dateErr);
+      const fallback = getFallbackPhotoDate(file);
+      setDateISO(fallback.dateISO);
+      setDisplayDate(fallback.displayDate);
+      setTime(fallback.time);
+      setDateSource('upload');
+    }
 
     try {
       const reader = new FileReader();
@@ -114,11 +137,13 @@ export default function PhonePhotoUploader({ isOpen, onClose, onSaveNewMemory, a
         ? (handwritten.startsWith('“') ? handwritten : `“${handwritten}”`)
         : '“one of my favorite memories.”';
 
+      const formattedDisplayDate = formatReadableDate(dateISO || displayDate);
+
       const newMemory = {
         id: `mem-${Date.now()}`,
         title: title || 'New Memory',
         date: dateISO,
-        displayDate: displayDate || '09.08.2026',
+        displayDate: formattedDisplayDate,
         time: time || '14:32',
         location: location || 'Phnom Penh',
         imageUrl: finalImageUrl,
@@ -127,7 +152,7 @@ export default function PhonePhotoUploader({ isOpen, onClose, onSaveNewMemory, a
         handwrittenNote: formattedNote,
         category: category,
         isFavorite: true,
-        cameraSettings: 'Phone 35mm Equivalent • Auto'
+        cameraSettings: dateSource === 'exif' ? 'Photo EXIF Capture Date Preserved' : 'Phone 35mm Equivalent • Auto'
       };
 
       onSaveNewMemory(newMemory);
@@ -137,11 +162,12 @@ export default function PhonePhotoUploader({ isOpen, onClose, onSaveNewMemory, a
     } catch (err) {
       console.warn('Fallback save without cloud:', err);
       // Failsafe: Save immediately with previewUrl so user NEVER loses their memory
+      const formattedDisplayDate = formatReadableDate(dateISO || displayDate);
       const newMemory = {
         id: `mem-${Date.now()}`,
         title: title || 'New Memory',
         date: dateISO,
-        displayDate: displayDate,
+        displayDate: formattedDisplayDate,
         time: time,
         location: location,
         imageUrl: previewUrl,
@@ -150,7 +176,7 @@ export default function PhonePhotoUploader({ isOpen, onClose, onSaveNewMemory, a
         handwrittenNote: `“${handwritten}”`,
         category: category,
         isFavorite: true,
-        cameraSettings: 'Phone 35mm Equivalent'
+        cameraSettings: dateSource === 'exif' ? 'Photo EXIF Capture Date Preserved' : 'Phone 35mm Equivalent'
       };
       onSaveNewMemory(newMemory);
       setIsDeveloping(false);
@@ -372,7 +398,7 @@ export default function PhonePhotoUploader({ isOpen, onClose, onSaveNewMemory, a
                     {handwritten || '“your smile here.”'}
                   </div>
                   <div className="polaroid-metadata">
-                    <span>{displayDate}</span>
+                    <span>{formatReadableDate(dateISO || displayDate)}</span>
                     <span>{location}</span>
                   </div>
 
@@ -429,9 +455,56 @@ export default function PhonePhotoUploader({ isOpen, onClose, onSaveNewMemory, a
                   {/* Date & Time Picker */}
                   <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '10px' }}>
                     <div>
-                      <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: '0.72rem', fontWeight: 700 }}>
-                        <Calendar size={12} style={{ verticalAlign: 'middle', marginRight: '4px' }} />
-                        DATE (TAP TO CHANGE)
+                      <label
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          fontFamily: 'var(--font-mono)',
+                          fontSize: '0.72rem',
+                          fontWeight: 700
+                        }}
+                      >
+                        <span>
+                          <Calendar size={12} style={{ verticalAlign: 'middle', marginRight: '4px' }} />
+                          DATE
+                        </span>
+                        {dateSource === 'exif' && (
+                          <span
+                            style={{
+                              color: 'var(--retro-burgundy)',
+                              fontSize: '0.62rem',
+                              background: 'var(--retro-cream-dark)',
+                              padding: '1px 5px',
+                              borderRadius: '2px',
+                              border: '1px solid var(--retro-burgundy)'
+                            }}
+                            title="Original capture date extracted from photo EXIF"
+                          >
+                            ✦ EXIF
+                          </span>
+                        )}
+                        {dateSource === 'upload' && (
+                          <span
+                            style={{
+                              color: 'var(--retro-brown)',
+                              fontSize: '0.62rem'
+                            }}
+                            title="Upload date assigned (no EXIF metadata found)"
+                          >
+                            UPLOAD TIME
+                          </span>
+                        )}
+                        {dateSource === 'manual' && (
+                          <span
+                            style={{
+                              color: 'var(--retro-charcoal)',
+                              fontSize: '0.62rem'
+                            }}
+                          >
+                            EDITED
+                          </span>
+                        )}
                       </label>
                       <input
                         type="date"

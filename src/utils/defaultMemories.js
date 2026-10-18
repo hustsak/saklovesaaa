@@ -102,67 +102,43 @@ export const initialMemories = [
 export const initialLoveLetters = [
   {
     id: "letter-01",
-    title: "Open When You're Sad",
-    subtitle: "A reminder of how deeply you are cherished",
-    date: "Written for a rainy evening",
-    content: `My dearest Chanreaksa,
-
-If you are reading this, your heart might feel a little heavier than usual today. I wish I could be right beside you, gently tucking your hair behind your ear and holding your hands until the storm passes.
-
-Please remember: whatever is troubling you right now does not define your worth or our tomorrow. You are the kindest, gentlest, and strongest person I know. Take a deep breath, brew a warm tea, and wrap yourself in the soft blanket. 
-
-You never have to carry the weight of the world alone. I am here, always in your corner, loving you through the quietest shadows.
-
-Forever yours,
-Viraksak`
+    title: "Open when you’re sad",
+    subtitle: "A gentle hand to hold when things feel heavy",
+    date: "Written on a rainy evening, while thinking about you.",
+    signature: "S♥S",
+    content: `I wish I could be there with you right now, just sitting beside you and holding your hand until you feel a little better. You don’t always have to be okay, baby. It’s okay to have bad days, to feel tired, or to cry when things get too much. I just hope you never forget that you have someone who loves you so much. And if I were there, I’d probably hug you really tight and tell you that everything will be okay. I love you, always. ♡`
   },
   {
     id: "letter-02",
-    title: "Open When You Miss Me",
-    subtitle: "Closing the distance between our hearts",
-    date: "Written during a quiet night",
-    content: `My beloved Reaksa,
-
-Look up at the night sky. The exact same moon and stars that watch over me are glowing right above you too. Distance and time are just physical coordinates — my heart has never left your side for a single second.
-
-Think of our afternoon at the riverside, the way we burst into laughter over the silliest jokes, and the quiet comfort of just existing together in the same room. That feeling is waiting for us again very soon.
-
-Close your eyes. Picture my arms around you. That’s where you always belong.
-
-With all my love,
-Sak`
+    title: "Open when you miss me",
+    subtitle: "No matter how far apart we are, you’re still my favorite person",
+    date: "Written on a rainy evening, while thinking about you.",
+    signature: "S♥S",
+    content: `I miss you too, more than you probably know. Sometimes I wish I could just skip all the distance and be right next to you, stealing little hugs and annoying you for no reason. I miss the little things the most, the things that might seem ordinary but mean everything to me. Until I can see you again, please take care of yourself for me, okay? Just remember, no matter how far apart we are, you’re still my favorite person.`
   },
   {
     id: "letter-03",
-    title: "Open When You Need A Smile",
-    subtitle: "A little ticket to instant happiness",
-    date: "Written on a bright Sunday",
-    content: `To my sweetest sunshine,
-
-Do you remember when we tried to make that iced coffee at home and the blender lid flew off, painting the kitchen ceiling in brown speckles? We stood there frozen for three seconds before laughing so hard our stomachs ached.
-
-Or the time we saw that fluffy white street cat that followed you for two blocks just because you made that cute squeaky greeting sound?
-
-Your smile is literally my favorite sight in the universe. It lights up every room and melts away every stressful day. Put on that cassette tape, dance a little in your socks, and remember how much joy you bring to my life!
-
-Lovingly,
-Your Sak`
+    title: "Open when you need a smile",
+    subtitle: "Come on, smile a little for me ♡",
+    date: "Written on a rainy evening, while thinking about you.",
+    signature: "S♥S",
+    content: `Hiiii, my favorite human. What are you doing looking so serious? Come on, smile a little for me. ♡ I wish I could see your face right now because I know how cute you look when you smile. If I were with you, I’d probably do something stupid just to make you laugh, and then laugh at myself too. I hope you have more happy days than sad ones, but whenever you need a little happiness, just remember there’s someone out here who thinks the world of you. Yes, that’s me. I love you, silly.`
   },
   {
     id: "letter-04",
-    title: "Open on Our Future Wedding Day",
-    subtitle: "A promise sealed in time",
-    date: "To be unsealed in our tomorrow",
-    content: `Chanreaksa, my eternal love,
+    title: "Open on our future wedding day",
+    subtitle: "I’m so happy it’s you. Today, tomorrow, and always.",
+    date: "Written on a rainy evening, while thinking about you.",
+    signature: "S♥S",
+    content: `So... we’re really here, huh? 🥹♡
 
-As I write this into our digital time capsule, I envision the day I see you walking down the aisle in white, with that breathtaking smile that first stole my breath years ago.
+I wonder how you’re feeling right now. I wonder if you’re nervous, if you’re smiling, or if you’re trying not to cry. I honestly don’t know what our future will look like in every little detail, but I know that I want to keep choosing you. I want the ordinary days with you, the late-night talks, the random arguments over silly things, the days when we have nothing to do, and all the little memories we haven’t made yet.
 
-From our first timid glances by the Tonle Sap to every quiet morning we have shared, every path has led me to you. I promise to protect your dreams, celebrate your triumphs, comfort your sorrows, and hold your hand through all the seasons of our lives.
+I hope we never stop being the two people who fell in love and wanted to know everything about each other. Even when life gets difficult, I hope we remember why we started and find our way back to each other.
 
-You are my home, my peace, and my greatest adventure.
+And if I could say one thing to you today, it would be this: I’m so happy it’s you. Out of all the people in this world, it’s you I get to stand beside today. And I hope that, many years from now, I’ll still look at you and feel lucky that I chose you.
 
-Forever & always,
-Viraksak Koy`
+I love you. Today, tomorrow, and on all the ordinary days in between. ♡`
   }
 ];
 

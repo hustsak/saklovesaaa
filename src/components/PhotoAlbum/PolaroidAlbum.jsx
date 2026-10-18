@@ -1,16 +1,47 @@
-import React, { useState } from 'react';
-import { MapPin, Clock, Calendar, Heart, ZoomIn, Sparkles } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { MapPin, Clock, Calendar, Heart, ZoomIn, Sparkles, ArrowUp, ArrowDown } from 'lucide-react';
 import { sound } from '../../utils/audioSynthesizer';
 import EditableText from '../Admin/EditableText';
+import { formatReadableDate, parseDateToTimestamp } from '../../utils/dateUtils';
 
 export default function PolaroidAlbum({ memories, onSelectMemory, onOpenUpload }) {
   const [activeCategory, setActiveCategory] = useState('All');
+  const [sortOrder, setSortOrder] = useState('asc'); // 'asc' = Oldest First, 'desc' = Newest First
 
   const categories = ['All', 'Firsts', 'Ordinary Magic', 'Late Nights', 'Getaways', 'Celebrations'];
 
   const filteredMemories = activeCategory === 'All'
     ? memories
     : memories.filter((m) => m.category === activeCategory);
+
+  // In-memory chronological sorting with deterministic secondary tie-breaking
+  const sortedMemories = useMemo(() => {
+    return [...filteredMemories].sort((a, b) => {
+      const timeA = parseDateToTimestamp(a.date || a.displayDate);
+      const timeB = parseDateToTimestamp(b.date || b.displayDate);
+
+      // Deterministic placement for photos with missing/invalid dates (placed at end)
+      if (timeA === null && timeB === null) {
+        return (a.id || '').localeCompare(b.id || '');
+      }
+      if (timeA === null) return 1;
+      if (timeB === null) return -1;
+
+      if (timeA !== timeB) {
+        return sortOrder === 'asc' ? timeA - timeB : timeB - timeA;
+      }
+
+      // Secondary deterministic ordering by time string, then memory ID
+      const timeStrA = a.time || '';
+      const timeStrB = b.time || '';
+      if (timeStrA !== timeStrB) {
+        return sortOrder === 'asc'
+          ? timeStrA.localeCompare(timeStrB)
+          : timeStrB.localeCompare(timeStrA);
+      }
+      return (a.id || '').localeCompare(b.id || '');
+    });
+  }, [filteredMemories, sortOrder]);
 
   // Subtle natural tilt angles for authentic physical polaroid scatter
   const rotations = [-2.5, 1.8, -1.2, 3.1, -2.8, 1.5, -1.9, 2.4];
@@ -130,6 +161,100 @@ export default function PolaroidAlbum({ memories, onSelectMemory, onOpenUpload }
             </button>
           )}
         </div>
+
+        {/* Chronological Sorting Controls (Oldest First ↑ / Newest First ↓) */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '10px',
+            marginTop: '16px',
+            flexWrap: 'wrap'
+          }}
+        >
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              background: 'var(--retro-cream-dark)',
+              border: '1.5px solid var(--retro-charcoal)',
+              borderRadius: '4px',
+              padding: '3px 4px',
+              gap: '4px',
+              boxShadow: '1.5px 1.5px 0px var(--retro-charcoal)'
+            }}
+          >
+            <span
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.68rem',
+                fontWeight: 700,
+                color: 'var(--retro-brown)',
+                padding: '3px 6px',
+                letterSpacing: '1px'
+              }}
+            >
+              CHRONOLOGICAL:
+            </span>
+
+            <button
+              type="button"
+              id="sort-oldest-btn"
+              onClick={() => {
+                sound.playKeyClick();
+                setSortOrder('asc');
+              }}
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.72rem',
+                fontWeight: 700,
+                padding: '4px 12px',
+                borderRadius: '2px',
+                border: 'none',
+                background: sortOrder === 'asc' ? 'var(--retro-burgundy)' : 'transparent',
+                color: sortOrder === 'asc' ? 'var(--retro-champagne)' : 'var(--retro-charcoal)',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                transition: 'all 0.15s ease'
+              }}
+              title="Sort Chronologically: Oldest First (Ascending)"
+            >
+              <ArrowUp size={12} />
+              <span>Oldest First ↑</span>
+            </button>
+
+            <button
+              type="button"
+              id="sort-newest-btn"
+              onClick={() => {
+                sound.playKeyClick();
+                setSortOrder('desc');
+              }}
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.72rem',
+                fontWeight: 700,
+                padding: '4px 12px',
+                borderRadius: '2px',
+                border: 'none',
+                background: sortOrder === 'desc' ? 'var(--retro-burgundy)' : 'transparent',
+                color: sortOrder === 'desc' ? 'var(--retro-champagne)' : 'var(--retro-charcoal)',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                transition: 'all 0.15s ease'
+              }}
+              title="Sort Chronologically: Newest First (Descending)"
+            >
+              <ArrowDown size={12} />
+              <span>Newest First ↓</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Polaroid Grid Layout */}
@@ -141,7 +266,7 @@ export default function PolaroidAlbum({ memories, onSelectMemory, onOpenUpload }
           paddingBottom: '60px'
         }}
       >
-        {filteredMemories.map((mem, index) => {
+        {sortedMemories.map((mem, index) => {
           const tilt = rotations[index % rotations.length];
 
           return (
@@ -217,7 +342,7 @@ export default function PolaroidAlbum({ memories, onSelectMemory, onOpenUpload }
                 <div className="polaroid-metadata">
                   <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <Calendar size={12} />
-                    {mem.displayDate}
+                    {formatReadableDate(mem.date || mem.displayDate)}
                   </span>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <MapPin size={12} />
