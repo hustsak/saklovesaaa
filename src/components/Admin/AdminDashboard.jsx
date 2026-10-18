@@ -3,6 +3,7 @@ import { Plus, Trash2, Edit3, Save, X, LogOut, Image, Film, FileText, Check } fr
 import { sound } from '../../utils/audioSynthesizer';
 import { clearAdminSession } from '../../utils/storage';
 import { formatReadableDate } from '../../utils/dateUtils';
+import { uploadImageWithFallback } from '../../utils/imageUploader';
 
 export default function AdminDashboard({
   memories,
@@ -360,7 +361,6 @@ export default function AdminDashboard({
                         if (file) {
                           sound.playShutterSound();
                           try {
-                            const { uploadImageWithFallback } = await import('../../utils/imageUploader');
                             const url = await uploadImageWithFallback(file);
                             setFormImageUrl(url);
                           } catch (err) {

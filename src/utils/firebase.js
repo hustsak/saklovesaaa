@@ -3,14 +3,6 @@
 
 import { initializeApp } from 'firebase/app';
 import {
-  getAuth,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signInAnonymously,
-  signOut,
-  onAuthStateChanged
-} from 'firebase/auth';
-import {
   getFirestore,
   collection,
   doc,
@@ -21,12 +13,6 @@ import {
   query,
   orderBy
 } from 'firebase/firestore';
-import {
-  getStorage,
-  ref as storageRef,
-  uploadBytes,
-  getDownloadURL
-} from 'firebase/storage';
 import { initialMemories } from './defaultMemories';
 
 const firebaseConfig = {
@@ -39,11 +25,35 @@ const firebaseConfig = {
   measurementId: "G-YLMK51BTRS"
 };
 
-// Initialize Firebase
+// Initialize Firebase App & Firestore
 export const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
 export const db = getFirestore(app);
-export const storage = getStorage(app);
+
+// Lazy instances for Auth & Storage (loaded on-demand when user logs in or uploads)
+let _auth = null;
+let _storage = null;
+
+export const getAuthInstance = async () => {
+  if (!_auth) {
+    const { getAuth } = await import('firebase/auth');
+    _auth = getAuth(app);
+  }
+  return _auth;
+};
+
+export const getStorageInstance = async () => {
+  if (!_storage) {
+    const { getStorage } = await import('firebase/storage');
+    _storage = getStorage(app);
+  }
+  return _storage;
+};
+
+export const auth = {
+  get currentUser() {
+    return _auth ? _auth.currentUser : null;
+  }
+};
 
 // Realtime Firestore listener for memories
 export const subscribeMemoriesFromFirestore = (callback) => {
@@ -101,7 +111,9 @@ export const deleteMemoryFromFirestore = async (memoryId) => {
 // Upload photo file directly to Firebase Storage
 export const uploadPhotoToFirebaseStorage = async (file) => {
   try {
-    const fileRef = storageRef(storage, `photos/${Date.now()}_${file.name}`);
+    const storageInstance = await getStorageInstance();
+    const { ref: storageRef, uploadBytes, getDownloadURL } = await import('firebase/storage');
+    const fileRef = storageRef(storageInstance, `photos/${Date.now()}_${file.name}`);
     const snapshot = await uploadBytes(fileRef, file);
     const downloadUrl = await getDownloadURL(snapshot.ref);
     return downloadUrl;
@@ -120,13 +132,17 @@ export const loginWithFirebase = async (emailOrUsername, password) => {
   }
 
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const authInstance = await getAuthInstance();
+    const { signInWithEmailAndPassword, createUserWithEmailAndPassword } = await import('firebase/auth');
+    const userCredential = await signInWithEmailAndPassword(authInstance, email, password);
     return { success: true, user: userCredential.user };
   } catch (error) {
     // If user not found, try creating account automatically for the couple
     if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
       try {
-        const newUserCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const authInstance = await getAuthInstance();
+        const { createUserWithEmailAndPassword } = await import('firebase/auth');
+        const newUserCredential = await createUserWithEmailAndPassword(authInstance, email, password);
         return { success: true, user: newUserCredential.user };
       } catch (signupError) {
         return { success: false, error: signupError.message };
@@ -138,9 +154,11 @@ export const loginWithFirebase = async (emailOrUsername, password) => {
 
 // Guarantee an active Firebase Auth session so request.auth != null for security rules
 export const ensureFirebaseAuth = async () => {
-  if (auth.currentUser) return auth.currentUser;
+  if (_auth && _auth.currentUser) return _auth.currentUser;
   try {
-    const cred = await signInAnonymously(auth);
+    const authInstance = await getAuthInstance();
+    const { signInAnonymously } = await import('firebase/auth');
+    const cred = await signInAnonymously(authInstance);
     return cred.user;
   } catch (e) {
     console.warn('Anonymous auth fallback notice:', e);

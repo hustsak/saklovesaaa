@@ -114,5 +114,23 @@ function mp3ManagerPlugin() {
 }
 
 export default defineConfig({
-  plugins: [react(), mp3ManagerPlugin()]
+  plugins: [react(), mp3ManagerPlugin()],
+  build: {
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          groups: [
+            {
+              name: 'firebase-firestore',
+              test: /node_modules\/(@firebase\/firestore|firebase\/firestore)/
+            },
+            {
+              name: 'react-vendor',
+              test: /node_modules\/(react|react-dom)/
+            }
+          ]
+        }
+      }
+    }
+  }
 });

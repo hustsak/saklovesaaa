@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Heart } from 'lucide-react';
 import { RELATIONSHIP_CONFIG, calculateDaysTogether } from '../../utils/dateUtils';
 import { sound } from '../../utils/audioSynthesizer';
-import confetti from 'canvas-confetti';
 
 export default function DaysTogetherCounter({ className = '', style = {} }) {
   const [daysInfo, setDaysInfo] = useState(() => calculateDaysTogether(RELATIONSHIP_CONFIG.startDate));
@@ -35,14 +34,19 @@ export default function DaysTogetherCounter({ className = '', style = {} }) {
     };
   }, []);
 
-  const handleClick = () => {
+  const handleClick = async () => {
     sound.playTapeClick();
-    confetti({
-      particleCount: 50,
-      spread: 70,
-      origin: { y: 0.55 },
-      colors: ['#722F37', '#E5C388', '#B76E79', '#FFF8EB']
-    });
+    try {
+      const { default: confetti } = await import('canvas-confetti');
+      confetti({
+        particleCount: 50,
+        spread: 70,
+        origin: { y: 0.55 },
+        colors: ['#722F37', '#E5C388', '#B76E79', '#FFF8EB']
+      });
+    } catch (e) {
+      console.warn('Confetti notice:', e);
+    }
   };
 
   return (

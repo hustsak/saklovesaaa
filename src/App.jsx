@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import RealisticSky from './components/Environment/RealisticSky';
 import RetroNavBar from './components/Navigation/RetroNavBar';
 import DigitalViewfinder from './components/CameraUI/DigitalViewfinder';
@@ -6,17 +6,19 @@ import ShutterTransition from './components/Transitions/ShutterTransition';
 import HomeHero from './components/Sections/HomeHero';
 import StoryTimeline from './components/Sections/StoryTimeline';
 import PolaroidAlbum from './components/PhotoAlbum/PolaroidAlbum';
-import MemoryModal from './components/PhotoAlbum/MemoryModal';
 import LoveLetters from './components/DesktopOS/LoveLetters';
-import LittleUniverse from './components/Sections/LittleUniverse';
-import RetroDesktop from './components/DesktopOS/RetroDesktop';
 import CassettePlayer from './components/MusicPlayer/CassettePlayer';
-import RetroLoginModal from './components/Admin/RetroLoginModal';
-import AdminDashboard from './components/Admin/AdminDashboard';
-import EasterEggsModal from './components/EasterEggs/EasterEggsModal';
-import PhonePhotoUploader from './components/PhotoUpload/PhonePhotoUploader';
 import { SiteTextProvider } from './context/SiteTextContext';
 import { useMusicPlayer } from './hooks/useMusicPlayer';
+
+// Code-split non-critical modals and heavy secondary desktop OS
+const MemoryModal = lazy(() => import('./components/PhotoAlbum/MemoryModal'));
+const RetroDesktop = lazy(() => import('./components/DesktopOS/RetroDesktop'));
+const RetroLoginModal = lazy(() => import('./components/Admin/RetroLoginModal'));
+const AdminDashboard = lazy(() => import('./components/Admin/AdminDashboard'));
+const EasterEggsModal = lazy(() => import('./components/EasterEggs/EasterEggsModal'));
+const PhonePhotoUploader = lazy(() => import('./components/PhotoUpload/PhonePhotoUploader'));
+const LittleUniverse = lazy(() => import('./components/Sections/LittleUniverse'));
 
 import {
   getStoredMemories,
@@ -27,7 +29,6 @@ import {
 } from './utils/storage';
 import { subscribeMemoriesFromFirestore } from './utils/firebase';
 import { sound } from './utils/audioSynthesizer';
-import confetti from 'canvas-confetti';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
@@ -280,12 +281,14 @@ export default function App() {
       <main style={{ position: 'relative', zIndex: 10, minHeight: '100vh' }}>
         {isDesktopView ? (
           /* Retro Early 2000s OS Desktop Mode */
-          <RetroDesktop
-            memories={memories}
-            letters={letters}
-            onSelectMemory={(m) => setSelectedMemory(m)}
-            musicPlayer={musicPlayer}
-          />
+          <Suspense fallback={null}>
+            <RetroDesktop
+              memories={memories}
+              letters={letters}
+              onSelectMemory={(m) => setSelectedMemory(m)}
+              musicPlayer={musicPlayer}
+            />
+          </Suspense>
         ) : (
           /* Connected Scrollable Digital Diary Experience */
           <div className="connected-scroll-page">
@@ -386,7 +389,9 @@ export default function App() {
 
             {/* 5. A LITTLE UNIVERSE SECTION */}
             <section id="universe">
-              <LittleUniverse />
+              <Suspense fallback={<div style={{ minHeight: '600px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--retro-brown)', fontFamily: 'var(--font-mono)', fontSize: '0.8rem' }}>✦ GATHERING STARLIGHT...</div>}>
+                <LittleUniverse />
+              </Suspense>
             </section>
           </div>
         )}
@@ -396,51 +401,69 @@ export default function App() {
       <CassettePlayer musicPlayer={musicPlayer} isMuted={isMuted} />
 
       {/* 8. Memory Viewfinder & Journal Page Modal */}
-      <MemoryModal
-        memory={selectedMemory}
-        memories={memories}
-        onClose={() => setSelectedMemory(null)}
-        onSelectMemory={(m) => setSelectedMemory(m)}
-        onUpdateMemory={handleUpdateMemory}
-        adminUser={adminUser}
-        onRequireAdminLogin={handleRequireAdminLogin}
-      />
+      {selectedMemory && (
+        <Suspense fallback={null}>
+          <MemoryModal
+            memory={selectedMemory}
+            memories={memories}
+            onClose={() => setSelectedMemory(null)}
+            onSelectMemory={(m) => setSelectedMemory(m)}
+            onUpdateMemory={handleUpdateMemory}
+            adminUser={adminUser}
+            onRequireAdminLogin={handleRequireAdminLogin}
+          />
+        </Suspense>
+      )}
 
       {/* 9. Retro Admin Login Modal ("PRIVATE ARCHIVE") */}
-      <RetroLoginModal
-        isOpen={isAdminLoginOpen}
-        onClose={() => setIsAdminLoginOpen(false)}
-        onLoginSuccess={handleAdminLoginSuccess}
-        reasonText={adminLoginReason}
-      />
+      {isAdminLoginOpen && (
+        <Suspense fallback={null}>
+          <RetroLoginModal
+            isOpen={isAdminLoginOpen}
+            onClose={() => setIsAdminLoginOpen(false)}
+            onLoginSuccess={handleAdminLoginSuccess}
+            reasonText={adminLoginReason}
+          />
+        </Suspense>
+      )}
 
       {/* 10. Admin Memory Management Dashboard */}
       {isAdminDashboardOpen && (
-        <AdminDashboard
-          memories={memories}
-          onSaveMemories={handleSaveMemories}
-          letters={letters}
-          onSaveLetters={handleSaveLetters}
-          onClose={() => setIsAdminDashboardOpen(false)}
-        />
+        <Suspense fallback={null}>
+          <AdminDashboard
+            memories={memories}
+            onSaveMemories={handleSaveMemories}
+            letters={letters}
+            onSaveLetters={handleSaveLetters}
+            onClose={() => setIsAdminDashboardOpen(false)}
+          />
+        </Suspense>
       )}
 
       {/* 11. Secret Easter Egg Modal */}
-      <EasterEggsModal
-        isOpen={isEasterEggOpen}
-        onClose={() => setIsEasterEggOpen(false)}
-        title={easterEggData?.title}
-        subtitle={easterEggData?.subtitle}
-        message={easterEggData?.message}
-      />
+      {isEasterEggOpen && (
+        <Suspense fallback={null}>
+          <EasterEggsModal
+            isOpen={isEasterEggOpen}
+            onClose={() => setIsEasterEggOpen(false)}
+            title={easterEggData?.title}
+            subtitle={easterEggData?.subtitle}
+            message={easterEggData?.message}
+          />
+        </Suspense>
+      )}
 
-        {/* 12. Phone Camera / Photo Upload Modal */}
-        <PhonePhotoUploader
-          isOpen={isPhoneUploadOpen}
-          onClose={() => setIsPhoneUploadOpen(false)}
-          onSaveNewMemory={handleSaveNewPhoneMemory}
-          adminUser={adminUser}
-        />
+      {/* 12. Phone Camera / Photo Upload Modal */}
+      {isPhoneUploadOpen && (
+        <Suspense fallback={null}>
+          <PhonePhotoUploader
+            isOpen={isPhoneUploadOpen}
+            onClose={() => setIsPhoneUploadOpen(false)}
+            onSaveNewMemory={handleSaveNewPhoneMemory}
+            adminUser={adminUser}
+          />
+        </Suspense>
+      )}
       </div>
     </SiteTextProvider>
   );
