@@ -248,18 +248,7 @@ export default function RetroLoginModal({ isOpen, onClose, onLoginSuccess, reaso
             </button>
           </form>
 
-          <div
-            style={{
-              marginTop: '18px',
-              fontSize: '0.68rem',
-              textAlign: 'center',
-              opacity: 0.6,
-              borderTop: '1px dashed #3A3734',
-              paddingTop: '10px'
-            }}
-          >
-            Tip: Test credentials `sak` / `reaksa` or `admin` / `love2026`
-          </div>
+
         </div>
       </div>
     </div>
