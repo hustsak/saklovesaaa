@@ -4,6 +4,7 @@ import {
   saveStoredCustomTexts,
   clearStoredCustomTexts,
   getStoredCustomImages,
+  getStoredCustomImagesAsync,
   saveStoredCustomImages,
   clearStoredCustomImages
 } from '../utils/storage';
@@ -42,6 +43,19 @@ export function SiteTextProvider({ children, adminUser, onRequestLogin, onLogout
   const [saveToastMessage, setSaveToastMessage] = useState('');
 
   const isEditMode = Boolean(adminUser);
+
+  // Hydrate images from IndexedDB (supports unlimited file size and count)
+  useEffect(() => {
+    let mounted = true;
+    getStoredCustomImagesAsync().then((idbImages) => {
+      if (mounted && idbImages && Object.keys(idbImages).length > 0) {
+        setSiteImages((prev) => ({ ...idbImages, ...prev }));
+      }
+    });
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   // Sync texts with Firestore
   useEffect(() => {

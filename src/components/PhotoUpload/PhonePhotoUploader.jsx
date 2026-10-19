@@ -84,23 +84,31 @@ export default function PhonePhotoUploader({ isOpen, onClose, onSaveNewMemory, a
     }
 
     try {
-      const reader = new FileReader();
-      reader.onload = (evt) => {
-        const url = evt.target.result;
-        setRawSourceUrl(url);
-        setPreviewUrl(url);
-        setIsProcessing(false);
-        setIsCropModalOpen(true); // Automatically open crop viewfinder
-      };
-      reader.onerror = () => {
-        setUploadError('Could not read image file. Please try another.');
-        setIsProcessing(false);
-      };
-      reader.readAsDataURL(file);
-    } catch (err) {
-      console.error('File load error:', err);
-      setUploadError('Error loading file. Please try again.');
+      const objectUrl = URL.createObjectURL(file);
+      setRawSourceUrl(objectUrl);
+      setPreviewUrl(objectUrl);
       setIsProcessing(false);
+      setIsCropModalOpen(true); // Automatically open crop viewfinder
+    } catch (err) {
+      try {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          const url = evt.target.result;
+          setRawSourceUrl(url);
+          setPreviewUrl(url);
+          setIsProcessing(false);
+          setIsCropModalOpen(true);
+        };
+        reader.onerror = () => {
+          setUploadError('Could not read image file. Please try another.');
+          setIsProcessing(false);
+        };
+        reader.readAsDataURL(file);
+      } catch (readerErr) {
+        console.error('File load error:', readerErr);
+        setUploadError('Error loading file. Please try again.');
+        setIsProcessing(false);
+      }
     }
   };
 

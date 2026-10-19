@@ -22,6 +22,7 @@ const LittleUniverse = lazy(() => import('./components/Sections/LittleUniverse')
 
 import {
   getStoredMemories,
+  getStoredMemoriesAsync,
   saveStoredMemories,
   getStoredLetters,
   saveStoredLetters,
@@ -55,6 +56,19 @@ export default function App() {
   const [isPhoneUploadOpen, setIsPhoneUploadOpen] = useState(false);
   const [easterEggData, setEasterEggData] = useState(null);
   const [isShutterActive, setIsShutterActive] = useState(false);
+
+  // Hydrate memories from IndexedDB (supports unlimited photo size and quantity)
+  useEffect(() => {
+    let mounted = true;
+    getStoredMemoriesAsync().then((idbMemories) => {
+      if (mounted && idbMemories && idbMemories.length > 0) {
+        setMemories((prev) => (idbMemories.length >= prev.length ? idbMemories : prev));
+      }
+    });
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   // Real-time Firestore sync & session check
   useEffect(() => {

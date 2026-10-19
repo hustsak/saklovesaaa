@@ -80,12 +80,18 @@ export default function EditableImage({
 
     sound.playTapeClick();
     setRawSelectedFile(file);
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      setRawImageForCrop(event.target.result);
+    try {
+      const objectUrl = URL.createObjectURL(file);
+      setRawImageForCrop(objectUrl);
       setIsCropperOpen(true);
-    };
-    reader.readAsDataURL(file);
+    } catch (err) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setRawImageForCrop(event.target.result);
+        setIsCropperOpen(true);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleCropComplete = async (cropResult) => {

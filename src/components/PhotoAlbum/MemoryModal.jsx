@@ -19,6 +19,7 @@ export default function MemoryModal({
   const [rawPhotoFile, setRawPhotoFile] = useState(null);
   const [isCropperOpen, setIsCropperOpen] = useState(false);
   const [isReplacingPhoto, setIsReplacingPhoto] = useState(false);
+  const [fitMode, setFitMode] = useState('contain'); // 'contain' displays all photo sizes/aspect ratios without clipping
 
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(() => memory?.title || '');
@@ -115,12 +116,18 @@ export default function MemoryModal({
     if (!file) return;
     sound.playTapeClick();
     setRawPhotoFile(file);
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      setRawCropImage(event.target.result);
+    try {
+      const objectUrl = URL.createObjectURL(file);
+      setRawCropImage(objectUrl);
       setIsCropperOpen(true);
-    };
-    reader.readAsDataURL(file);
+    } catch (err) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setRawCropImage(event.target.result);
+        setIsCropperOpen(true);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handlePhotoCropDone = async (cropResult) => {
@@ -245,7 +252,29 @@ export default function MemoryModal({
                 <span style={{ color: 'var(--retro-faded-red)', fontWeight: 700 }}>REC ●</span>
                 <span>{memory.time}</span>
               </div>
-              <div>[RAW 24FPS]</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    sound.playKeyClick();
+                    setFitMode((prev) => (prev === 'contain' ? 'cover' : 'contain'));
+                  }}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    borderRadius: '2px',
+                    color: '#FFF',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.62rem',
+                    padding: '2px 6px',
+                    cursor: 'pointer'
+                  }}
+                  title="Toggle photo view: fit all photo dimensions or fill frame"
+                >
+                  {fitMode === 'contain' ? '⊡ FIT ALL SIZES' : '⊞ FILL FRAME'}
+                </button>
+                <div>[RAW 24FPS]</div>
+              </div>
             </div>
 
             {/* Inner Photo with Viewfinder Crosshair */}
@@ -256,7 +285,11 @@ export default function MemoryModal({
                 aspectRatio: '4 / 3',
                 overflow: 'hidden',
                 borderRadius: '3px',
-                border: '1px solid rgba(255,255,255,0.15)'
+                background: '#090807',
+                border: '1px solid rgba(255,255,255,0.15)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
               }}
             >
               <img
@@ -265,8 +298,9 @@ export default function MemoryModal({
                 style={{
                   width: '100%',
                   height: '100%',
-                  objectFit: 'cover',
-                  filter: 'contrast(1.05) sepia(0.08)'
+                  objectFit: fitMode,
+                  filter: 'contrast(1.05) sepia(0.08)',
+                  transition: 'object-fit 0.2s ease'
                 }}
               />
 

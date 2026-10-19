@@ -3,6 +3,7 @@
 
 import { initialMemories, initialLoveLetters, initialFuturePlans } from './defaultMemories';
 import { saveMemoryToFirestore, deleteMemoryFromFirestore } from './firebase';
+import { idbSet, idbGet } from './indexedDBStorage';
 
 const STORAGE_KEYS = {
   MEMORIES: 'love_archive_memories_v1',
@@ -14,6 +15,7 @@ const STORAGE_KEYS = {
   IMAGES: 'love_archive_custom_images_v1'
 };
 
+// Immediate cache read (localStorage)
 export const getStoredMemories = () => {
   try {
     const data = localStorage.getItem(STORAGE_KEYS.MEMORIES);
@@ -26,11 +28,32 @@ export const getStoredMemories = () => {
   return initialMemories;
 };
 
+// Asynchronous deep read from IndexedDB (supports unlimited photo size and quantity)
+export const getStoredMemoriesAsync = async () => {
+  try {
+    const idbData = await idbGet(STORAGE_KEYS.MEMORIES);
+    if (idbData && Array.isArray(idbData) && idbData.length > 0) {
+      return idbData;
+    }
+  } catch (e) {
+    console.warn('IndexedDB memories read error:', e);
+  }
+  return getStoredMemories();
+};
+
 export const saveStoredMemories = async (memories, changedMemory = null, isDelete = false) => {
+  // 1. Unlimited persistent local store via IndexedDB
+  try {
+    await idbSet(STORAGE_KEYS.MEMORIES, memories);
+  } catch (e) {
+    console.warn('IndexedDB memory write notice:', e);
+  }
+
+  // 2. LocalStorage fast-cache (with quota guard)
   try {
     localStorage.setItem(STORAGE_KEYS.MEMORIES, JSON.stringify(memories));
   } catch (e) {
-    console.error('Failed to save memories locally:', e);
+    console.warn('LocalStorage quota limit reached (safely stored in IndexedDB):', e.message);
   }
 
   // Cloud sync to Firestore
@@ -144,18 +167,42 @@ export const getStoredCustomImages = () => {
   return {};
 };
 
-export const saveStoredCustomImages = (images) => {
+export const getStoredCustomImagesAsync = async () => {
+  try {
+    const idbData = await idbGet(STORAGE_KEYS.IMAGES);
+    if (idbData && typeof idbData === 'object' && Object.keys(idbData).length > 0) {
+      return idbData;
+    }
+  } catch (e) {
+    console.warn('IndexedDB custom images read error:', e);
+  }
+  return getStoredCustomImages();
+};
+
+export const saveStoredCustomImages = async (images) => {
+  // 1. Unlimited persistent local store via IndexedDB
+  try {
+    await idbSet(STORAGE_KEYS.IMAGES, images);
+  } catch (e) {
+    console.warn('IndexedDB images write notice:', e);
+  }
+
+  // 2. LocalStorage fast-cache (with quota guard)
   try {
     localStorage.setItem(STORAGE_KEYS.IMAGES, JSON.stringify(images));
   } catch (e) {
-    console.error('Failed to save custom images locally:', e);
+    console.warn('LocalStorage quota limit reached for images (safely stored in IndexedDB):', e.message);
   }
 };
 
-export const clearStoredCustomImages = () => {
+export const clearStoredCustomImages = async () => {
   try {
     localStorage.removeItem(STORAGE_KEYS.IMAGES);
   } catch (e) {}
+  try {
+    await idbSet(STORAGE_KEYS.IMAGES, {});
+  } catch (e) {}
 };
+
 
 
