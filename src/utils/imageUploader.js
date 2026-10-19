@@ -69,11 +69,11 @@ export const processPhoneImageFile = (file) => {
 export const uploadImageWithFallback = async (file) => {
   const processed = await processPhoneImageFile(file);
 
-  // Promise with 3.5s timeout for Firebase Storage
+  // Promise with 12s timeout for Firebase Storage (3.5s was too short for mobile)
   const uploadWithTimeout = new Promise(async (resolve, reject) => {
     const timer = setTimeout(() => {
       reject(new Error('Firebase Storage timeout, using optimized local store'));
-    }, 3500);
+    }, 12000);
 
     try {
       const fileToUpload = new File([processed.blob], processed.fileName, { type: 'image/jpeg' });

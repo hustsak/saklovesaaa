@@ -87,6 +87,9 @@ export const subscribeMemoriesFromFirestore = (callback) => {
 // Save / Update memory in Firestore
 export const saveMemoryToFirestore = async (memory) => {
   try {
+    // Ensure authenticated session for Firestore security rules
+    await ensureFirebaseAuth();
+
     const memoryRef = doc(db, 'memories', memory.id);
     await setDoc(memoryRef, memory, { merge: true });
     return true;
@@ -111,6 +114,10 @@ export const deleteMemoryFromFirestore = async (memoryId) => {
 // Upload photo file directly to Firebase Storage
 export const uploadPhotoToFirebaseStorage = async (file) => {
   try {
+    // Ensure we have an authenticated session before uploading
+    // Storage rules require request.auth != null
+    await ensureFirebaseAuth();
+
     const storageInstance = await getStorageInstance();
     const { ref: storageRef, uploadBytes, getDownloadURL } = await import('firebase/storage');
     const fileRef = storageRef(storageInstance, `photos/${Date.now()}_${file.name}`);
