@@ -30,11 +30,12 @@ const SiteTextContext = createContext({
   setEditingKey: () => {},
   adminUser: null,
   onRequestLogin: (payload) => {},
+  onLogout: () => {},
   saveToastMessage: '',
   setSaveToastMessage: () => {}
 });
 
-export function SiteTextProvider({ children, adminUser, onRequestLogin }) {
+export function SiteTextProvider({ children, adminUser, onRequestLogin, onLogout }) {
   const [siteTexts, setSiteTexts] = useState(() => getStoredCustomTexts());
   const [siteImages, setSiteImages] = useState(() => getStoredCustomImages());
   const [editingKey, setEditingKey] = useState(null);
@@ -143,6 +144,7 @@ export function SiteTextProvider({ children, adminUser, onRequestLogin }) {
         setEditingKey,
         adminUser,
         onRequestLogin,
+        onLogout,
         saveToastMessage,
         setSaveToastMessage
       }}

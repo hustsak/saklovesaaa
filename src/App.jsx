@@ -25,7 +25,8 @@ import {
   saveStoredMemories,
   getStoredLetters,
   saveStoredLetters,
-  getAdminSession
+  getAdminSession,
+  clearAdminSession
 } from './utils/storage';
 import { subscribeMemoriesFromFirestore } from './utils/firebase';
 import { sound } from './utils/audioSynthesizer';
@@ -241,7 +242,7 @@ export default function App() {
   };
 
   return (
-    <SiteTextProvider adminUser={adminUser} onRequestLogin={handleRequestLogin}>
+    <SiteTextProvider adminUser={adminUser} onRequestLogin={handleRequestLogin} onLogout={handleLogout}>
       <div className={`app-root ${crtMode ? 'crt-mode' : ''}`}>
         {/* 1. Realistic Sunset Environment Layer (behind retro interface) */}
         <RealisticSky />
@@ -463,6 +464,81 @@ export default function App() {
             adminUser={adminUser}
           />
         </Suspense>
+      )}
+
+      {/* 13. Floating Admin Status Bar (visible sign-out for logged-in users) */}
+      {adminUser && (
+        <div
+          className="admin-floating-bar"
+          style={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 960,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '12px',
+            padding: '8px 16px',
+            background: 'linear-gradient(180deg, rgba(28,27,26,0.92) 0%, rgba(28,27,26,0.97) 100%)',
+            backdropFilter: 'blur(10px)',
+            borderTop: '1px solid rgba(199,182,153,0.2)',
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.72rem',
+            color: 'var(--retro-champagne)',
+            letterSpacing: '0.5px',
+            animation: 'slideUpBar 0.3s ease-out'
+          }}
+        >
+          <span style={{ opacity: 0.6 }}>✦ SIGNED IN AS</span>
+          <span style={{
+            background: 'var(--retro-burgundy)',
+            color: '#FFF',
+            padding: '2px 10px',
+            borderRadius: '3px',
+            fontWeight: 700,
+            fontSize: '0.74rem',
+            letterSpacing: '1px'
+          }}>
+            {adminUser.username?.toUpperCase() || 'ADMIN'}
+          </span>
+          <span style={{ opacity: 0.4 }}>•</span>
+          <span style={{ opacity: 0.6 }}>EDIT MODE ACTIVE</span>
+          <button
+            onClick={() => {
+              sound.playKeyClick();
+              handleLogout();
+            }}
+            style={{
+              background: 'transparent',
+              border: '1px solid rgba(199,182,153,0.4)',
+              color: 'var(--retro-champagne)',
+              padding: '4px 14px',
+              borderRadius: '3px',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.7rem',
+              fontWeight: 700,
+              letterSpacing: '1px',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              marginLeft: '4px'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = 'var(--retro-faded-red)';
+              e.target.style.borderColor = 'var(--retro-faded-red)';
+              e.target.style.color = '#FFF';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = 'transparent';
+              e.target.style.borderColor = 'rgba(199,182,153,0.4)';
+              e.target.style.color = 'var(--retro-champagne)';
+            }}
+            title="Sign out of admin session"
+          >
+            SIGN OUT
+          </button>
+        </div>
       )}
       </div>
     </SiteTextProvider>

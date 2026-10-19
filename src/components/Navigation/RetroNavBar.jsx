@@ -132,11 +132,11 @@ export default function RetroNavBar({
 
             {/* Admin Archive Login / Active Session */}
             {adminUser ? (
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                 <button
                   className="nav-icon-toggle active-indicator"
-                  style={{ width: 'auto', padding: '0 6px', fontSize: '0.65rem', fontFamily: 'var(--font-mono)' }}
-                  title="Admin Console Open"
+                  style={{ width: 'auto', padding: '0 8px', fontSize: '0.68rem', fontFamily: 'var(--font-mono)', fontWeight: 700 }}
+                  title="Admin Dashboard (Manage memories & letters)"
                   onClick={() => {
                     sound.playKeyClick();
                     onOpenAdmin();
@@ -146,14 +146,27 @@ export default function RetroNavBar({
                 </button>
                 <button
                   className="nav-icon-toggle"
-                  style={{ width: '26px', height: '26px', color: 'var(--retro-faded-red)', fontSize: '0.9rem' }}
-                  title="Logout Admin"
+                  style={{
+                    width: 'auto',
+                    padding: '0 8px',
+                    height: '26px',
+                    color: 'var(--retro-faded-red)',
+                    borderColor: 'var(--retro-faded-red)',
+                    fontSize: '0.68rem',
+                    fontFamily: 'var(--font-mono)',
+                    fontWeight: 700,
+                    letterSpacing: '0.5px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}
+                  title="Sign out of edit session"
                   onClick={() => {
                     sound.playKeyClick();
                     if (typeof onLogout === 'function') onLogout();
                   }}
                 >
-                  &times;
+                  <span>SIGN OUT</span>
                 </button>
               </div>
             ) : (
